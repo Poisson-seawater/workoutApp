@@ -315,6 +315,36 @@
             box-shadow: 0 12px 28px rgba(37,99,235,0.08);
             backdrop-filter: blur(10px);
         }
+        .exercise-hub-header {
+            display: grid;
+            gap: 0.55rem;
+        }
+        .exercise-hub-header-copy,
+        .exercise-plan-card-copy {
+            min-width: 0;
+        }
+        .exercise-hub-header-meta {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: baseline;
+            gap: 0.2rem 0.6rem;
+        }
+        .exercise-plan-card-header {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto;
+            column-gap: 0.75rem;
+            row-gap: 0.35rem;
+            align-items: start;
+        }
+        .exercise-plan-card-subtitle {
+            grid-column: 1 / -1;
+        }
+        .tab-label {
+            white-space: nowrap;
+            line-height: 1.05;
+            letter-spacing: -0.01em;
+            font-size: 0.72rem;
+        }
         .thread-chip {
             display: inline-flex;
             align-items: center;
@@ -752,13 +782,13 @@
     <!-- ===== SCREEN: EXERCISE HUB ===== -->
     <div id="screen-exercise" class="screen fade-in">
         <div class="px-5 pt-4 pb-2">
-            <div class="flex items-start justify-between gap-3">
-                <div>
+            <div class="exercise-hub-header">
+                <div class="exercise-hub-header-copy">
                     <div class="text-xs uppercase tracking-[0.14em] text-primary-500 font-semibold">Tout au même endroit</div>
                     <h1 class="text-2xl font-bold text-gray-900 mt-1">Exercices</h1>
                     <p class="text-sm text-gray-500 mt-1">Ton entraînement quotidien et tes exercices de physio, sur une seule page.</p>
                 </div>
-                <div class="text-right">
+                <div class="exercise-hub-header-meta">
                     <div class="text-sm font-semibold text-primary-600" id="exercise-hub-count">6 exos aujourd'hui</div>
                     <div class="text-[11px] text-gray-400" id="exercise-hub-subcount">3 physio + 3 entraînement quotidien</div>
                 </div>
@@ -1885,27 +1915,27 @@
         <div class="flex">
             <button onclick="switchTab('home')" class="tab-btn active flex-1 flex flex-col items-center py-2.5 relative" data-tab="home">
                 <svg class="w-6 h-6 tab-icon text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
-                <span class="text-xs mt-0.5">Accueil</span>
+                <span class="tab-label mt-0.5">Accueil</span>
                 <span class="tab-dot absolute top-1.5 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-primary-600 rounded-full"></span>
             </button>
             <button onclick="switchTab('exercise')" class="tab-btn flex-1 flex flex-col items-center py-2.5 text-gray-400 relative" data-tab="exercise">
                 <svg class="w-6 h-6 tab-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-                <span class="text-xs mt-0.5">Exercices</span>
+                <span class="tab-label mt-0.5">Exercices</span>
                 <span class="tab-dot absolute top-1.5 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-primary-600 rounded-full hidden"></span>
             </button>
             <button onclick="openLogTab()" class="tab-btn flex-1 flex flex-col items-center py-2.5 text-gray-400 relative" data-tab="log">
                 <svg class="w-6 h-6 tab-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
-                <span class="text-xs mt-0.5">Check-in</span>
+                <span class="tab-label mt-0.5">Check-in</span>
                 <span class="tab-dot absolute top-1.5 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-primary-600 rounded-full hidden"></span>
             </button>
             <button onclick="switchTab('messages')" class="tab-btn flex-1 flex flex-col items-center py-2.5 text-gray-400 relative" data-tab="messages">
                 <svg class="w-6 h-6 tab-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
-                <span class="text-xs mt-0.5">Messages</span>
+                <span class="tab-label mt-0.5">Messages</span>
                 <span class="tab-dot absolute top-1.5 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-primary-600 rounded-full hidden"></span>
             </button>
             <button onclick="switchTab('profile')" class="tab-btn flex-1 flex flex-col items-center py-2.5 text-gray-400 relative" data-tab="profile">
                 <svg class="w-6 h-6 tab-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
-                <span class="text-xs mt-0.5">Profil</span>
+                <span class="tab-label mt-0.5">Profil</span>
                 <span class="tab-dot absolute top-1.5 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-primary-600 rounded-full hidden"></span>
             </button>
         </div>
@@ -3161,13 +3191,13 @@
 
         anatomyEl.innerHTML = `
             <div class="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm">
-                <div class="flex items-start justify-between gap-3">
-                    <div>
+                <div class="exercise-plan-card-header">
+                    <div class="exercise-plan-card-copy">
                         <div class="text-xs uppercase tracking-[0.14em] text-primary-500 font-semibold">Plan du jour</div>
                         <div class="text-lg font-semibold text-gray-900 mt-1">Choisis ton bloc</div>
-                        <div class="text-sm text-gray-500 mt-1">Sélectionne d'abord la physio ou l'entraînement quotidien. Le bouton commencer lance ensuite la séance guidée.</div>
                     </div>
                     <span class="ui-pill px-2.5 py-1 rounded-full bg-primary-50 text-primary-600 text-[11px] font-semibold">Aujourd'hui</span>
+                    <div class="exercise-plan-card-subtitle text-sm text-gray-500">Sélectionne d'abord la physio ou l'entraînement quotidien. Le bouton commencer lance ensuite la séance guidée.</div>
                 </div>
                 <div class="grid grid-cols-2 gap-3 mt-4">
                     <button type="button" onclick="selectExerciseProgram('physio')" class="rounded-2xl border border-primary-100 bg-primary-50 p-4 text-left transition hover:border-primary-200 hover:bg-primary-50/80">
