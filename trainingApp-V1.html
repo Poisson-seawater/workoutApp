@@ -4,13 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Physio App — Patient</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
             theme: {
                 extend: {
-                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    fontFamily: { sans: ['Instrument Sans', 'sans-serif'], display: ['Fraunces', 'serif'] },
                     colors: {
                         primary: { 50: '#eff6ff', 100: '#dbeafe', 200: '#bfdbfe', 300: '#93c5fd', 400: '#60a5fa', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8' },
                         success: { 50: '#ecfdf5', 100: '#d1fae5', 500: '#10b981', 600: '#059669' },
@@ -22,7 +22,40 @@
         }
     </script>
     <style>
-        body { font-family: 'Inter', sans-serif; background: #f8fafc; color: #0f172a; min-height: 100dvh; }
+        :root {
+            --app-bg: #f4f8ff;
+            --app-surface: rgba(255,255,255,0.82);
+            --app-surface-strong: rgba(255,255,255,0.94);
+            --app-border: rgba(148,163,184,0.18);
+            --app-shadow: 0 26px 60px rgba(15,23,42,0.12), 0 10px 26px rgba(37,99,235,0.08);
+            --app-shadow-soft: 0 14px 32px rgba(15,23,42,0.07);
+            --nav-height: 90px;
+            --composer-offset: calc(var(--nav-height) + env(safe-area-inset-bottom));
+        }
+        body {
+            font-family: 'Instrument Sans', sans-serif;
+            background:
+                radial-gradient(1200px 620px at -10% -10%, rgba(191,219,254,0.72), transparent 55%),
+                radial-gradient(900px 540px at 110% 0%, rgba(167,243,208,0.45), transparent 48%),
+                linear-gradient(180deg, #f7fbff 0%, #f4f8ff 42%, #eef4ff 100%);
+            color: #0f172a;
+            min-height: 100dvh;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            background-image: linear-gradient(rgba(255,255,255,0.16) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.16) 1px, transparent 1px);
+            background-size: 22px 22px;
+            mask-image: linear-gradient(180deg, rgba(0,0,0,0.45), transparent 85%);
+            opacity: 0.35;
+        }
+        h1 {
+            font-family: 'Fraunces', serif;
+            letter-spacing: -0.035em;
+            line-height: 1.04;
+        }
         .screen { display: none; }
         .screen.active { display: block; }
         .tab-btn.active { color: #2563eb; }
@@ -34,8 +67,19 @@
         .exercise-check:checked ~ .exercise-badge { background: #ecfdf5; color: #059669; }
         .fade-in { animation: fadeIn 0.3s ease; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-        .phone-frame { max-width: 390px; margin: 0 auto; min-height: 100dvh; position: relative; padding-bottom: calc(104px + env(safe-area-inset-bottom)); }
-        .tab-btn { min-height: 68px; }
+        .phone-frame {
+            max-width: 390px;
+            margin: 14px auto 0;
+            min-height: calc(100dvh - 14px);
+            position: relative;
+            padding-bottom: calc(118px + env(safe-area-inset-bottom));
+            background: linear-gradient(180deg, rgba(255,255,255,0.96) 0%, rgba(248,250,252,0.94) 100%);
+            border: 1px solid var(--app-border);
+            box-shadow: var(--app-shadow);
+            border-radius: 32px 32px 0 0;
+            overflow: visible;
+        }
+        .tab-btn { min-height: 60px; }
         button:focus-visible,
         a:focus-visible,
         input:focus-visible,
@@ -48,7 +92,371 @@
             opacity: 0.72;
         }
         @supports (padding: max(0px)) {
-            .phone-safe-nav { padding-bottom: max(0.75rem, env(safe-area-inset-bottom)); }
+            .phone-safe-nav { padding-bottom: max(0.25rem, env(safe-area-inset-bottom)); }
+        }
+        .hero-panel {
+            margin: 16px 20px 12px;
+            padding: 22px 20px;
+            border-radius: 28px;
+            background: linear-gradient(135deg, rgba(219,234,254,0.95) 0%, rgba(255,255,255,0.84) 52%, rgba(209,250,229,0.72) 100%);
+            border: 1px solid rgba(191,219,254,0.95);
+            box-shadow: 0 20px 40px rgba(59,130,246,0.1);
+            position: relative;
+        }
+        .hero-panel::after {
+            content: '';
+            position: absolute;
+            inset: auto -16% -52% 46%;
+            height: 180px;
+            background: radial-gradient(circle, rgba(59,130,246,0.14), transparent 62%);
+            pointer-events: none;
+        }
+        .hero-header {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto;
+            column-gap: 0.75rem;
+            row-gap: 0.35rem;
+            align-items: start;
+        }
+        .hero-header-copy {
+            min-width: 0;
+        }
+        .hero-next-rdv-row {
+            grid-column: 1 / -1;
+            min-width: 0;
+        }
+        .hero-next-rdv {
+            white-space: nowrap;
+        }
+        .home-stats .flex-1 {
+            background: rgba(255,255,255,0.8);
+            border: 1px solid rgba(148,163,184,0.14);
+            box-shadow: var(--app-shadow-soft);
+            backdrop-filter: blur(10px);
+            border-radius: 22px;
+            padding: 0.95rem 0.75rem;
+            position: relative;
+            overflow: hidden;
+        }
+        .home-stats .flex-1::after {
+            content: '';
+            position: absolute;
+            inset: auto -18% -54% 46%;
+            height: 96px;
+            background: radial-gradient(circle, rgba(255,255,255,0.4), transparent 62%);
+            pointer-events: none;
+        }
+        .hero-cta {
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 58%, #0f766e 100%);
+            box-shadow: 0 18px 36px rgba(37,99,235,0.22);
+        }
+        .section-kicker {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            font-size: 0.68rem;
+            line-height: 1;
+            text-transform: uppercase;
+            letter-spacing: 0.16em;
+            font-weight: 700;
+            color: #2563eb;
+        }
+        .section-pill {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 1.9rem;
+            padding: 0.38rem 0.72rem;
+            border-radius: 999px;
+            border: 1px solid rgba(191,219,254,0.9);
+            background: rgba(255,255,255,0.76);
+            color: #475569;
+            font-size: 0.72rem;
+            font-weight: 600;
+            box-shadow: 0 8px 18px rgba(15,23,42,0.05);
+            backdrop-filter: blur(12px);
+            white-space: nowrap;
+            flex-shrink: 0;
+            line-height: 1.05;
+            text-align: center;
+        }
+        .hero-chip {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.5rem 0.8rem;
+            border-radius: 999px;
+            background: rgba(255,255,255,0.76);
+            border: 1px solid rgba(191,219,254,0.95);
+            color: #1d4ed8;
+            font-size: 0.72rem;
+            font-weight: 700;
+            box-shadow: 0 10px 22px rgba(37,99,235,0.08);
+            white-space: nowrap;
+            flex-shrink: 0;
+            line-height: 1.05;
+            text-align: center;
+        }
+        .ui-pill {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            white-space: nowrap;
+            flex-shrink: 0;
+            line-height: 1.05;
+            text-align: center;
+        }
+        .hero-meta-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 0.75rem;
+        }
+        .hero-meta-card {
+            padding: 0.9rem 0.95rem;
+            border-radius: 20px;
+            background: rgba(255,255,255,0.68);
+            border: 1px solid rgba(148,163,184,0.14);
+            box-shadow: 0 10px 24px rgba(15,23,42,0.05);
+            backdrop-filter: blur(10px);
+        }
+        .hero-meta-card span {
+            display: block;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.14em;
+            color: #64748b;
+            font-weight: 700;
+        }
+        .hero-meta-card strong {
+            display: block;
+            margin-top: 0.35rem;
+            font-size: 0.82rem;
+            line-height: 1.35;
+            color: #0f172a;
+            font-weight: 600;
+        }
+        .bg-white.border.border-gray-100.rounded-xl,
+        .bg-white.border.border-gray-100.rounded-2xl,
+        .bg-white.border.border-gray-100.rounded-xl.shadow-sm,
+        .bg-white.border.border-gray-100.rounded-2xl.shadow-sm {
+            background: var(--app-surface);
+            border-color: var(--app-border);
+            box-shadow: var(--app-shadow-soft);
+            backdrop-filter: blur(12px);
+        }
+        .quick-action-grid > button {
+            background: rgba(255,255,255,0.72);
+            border-color: rgba(148,163,184,0.14);
+            box-shadow: 0 10px 22px rgba(15,23,42,0.05);
+            transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+            min-height: 122px;
+        }
+        .quick-action-grid > button:hover {
+            transform: translateY(-1px);
+            border-color: rgba(96,165,250,0.28);
+            box-shadow: 0 14px 28px rgba(37,99,235,0.1);
+        }
+        .exercise-card {
+            background: var(--app-surface-strong);
+            border-color: rgba(148,163,184,0.16) !important;
+            border-radius: 24px !important;
+            box-shadow: 0 14px 32px rgba(15,23,42,0.06), 0 4px 12px rgba(37,99,235,0.05) !important;
+            transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+            backdrop-filter: blur(12px);
+        }
+        .exercise-card:hover {
+            transform: translateY(-1px);
+            border-color: rgba(96,165,250,0.3) !important;
+            box-shadow: 0 18px 36px rgba(15,23,42,0.08), 0 10px 22px rgba(37,99,235,0.08) !important;
+        }
+        .exercise-card-icon {
+            background: linear-gradient(180deg, rgba(219,234,254,0.9), rgba(239,246,255,0.82));
+            border: 1px solid rgba(191,219,254,0.9);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.8);
+        }
+        .notice-card {
+            background: linear-gradient(135deg, rgba(255,251,235,0.96) 0%, rgba(255,255,255,0.9) 100%);
+            border-color: rgba(253,230,138,0.85) !important;
+            border-radius: 22px !important;
+            box-shadow: 0 14px 30px rgba(217,119,6,0.08);
+        }
+        .resource-card {
+            background: rgba(255,255,255,0.8) !important;
+            border-color: rgba(148,163,184,0.16) !important;
+            border-radius: 22px !important;
+            box-shadow: 0 12px 26px rgba(15,23,42,0.05) !important;
+            transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+        }
+        .resource-card:hover {
+            transform: translateY(-1px);
+            border-color: rgba(96,165,250,0.28) !important;
+            box-shadow: 0 18px 36px rgba(15,23,42,0.07), 0 10px 24px rgba(37,99,235,0.06) !important;
+        }
+        .messages-header {
+            background: linear-gradient(180deg, rgba(255,255,255,0.92), rgba(248,250,252,0.82));
+            backdrop-filter: blur(12px);
+        }
+        .messages-thread {
+            max-height: calc(100dvh - 228px) !important;
+            padding-bottom: calc(164px + env(safe-area-inset-bottom)) !important;
+        }
+        .messages-summary-card {
+            background: linear-gradient(135deg, rgba(239,246,255,0.92) 0%, rgba(255,255,255,0.82) 100%);
+            border: 1px solid rgba(191,219,254,0.9);
+            box-shadow: 0 12px 28px rgba(37,99,235,0.08);
+            backdrop-filter: blur(10px);
+        }
+        .thread-chip {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.4rem 0.85rem;
+            border-radius: 999px;
+            background: rgba(255,255,255,0.74);
+            border: 1px solid rgba(226,232,240,0.95);
+            color: #94a3b8;
+            box-shadow: 0 8px 18px rgba(15,23,42,0.04);
+        }
+        .message-bubble {
+            box-shadow: 0 10px 22px rgba(15,23,42,0.06);
+            border-radius: 20px;
+        }
+        .message-bubble-incoming {
+            background: linear-gradient(180deg, rgba(255,255,255,0.96), rgba(241,245,249,0.88));
+            border: 1px solid rgba(148,163,184,0.16);
+        }
+        .message-bubble-outgoing {
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 68%, #1e40af 100%);
+        }
+        .message-bubble-ai {
+            background: linear-gradient(180deg, rgba(239,246,255,0.98), rgba(219,234,254,0.78));
+            border: 1px solid rgba(147,197,253,0.4);
+        }
+        .message-composer {
+            bottom: calc(86px + env(safe-area-inset-bottom)) !important;
+            border: 1px solid rgba(148,163,184,0.14);
+            border-bottom: none;
+            border-radius: 24px 24px 0 0;
+            background: rgba(248,250,252,0.84) !important;
+            backdrop-filter: blur(16px);
+            box-shadow: 0 -14px 30px rgba(15,23,42,0.08);
+        }
+        .message-input {
+            background: rgba(255,255,255,0.86) !important;
+            border-color: rgba(148,163,184,0.22) !important;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.7);
+        }
+        .message-send-btn {
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%) !important;
+            box-shadow: 0 12px 24px rgba(37,99,235,0.24);
+        }
+        .app-nav {
+            background: rgba(255,255,255,0.82) !important;
+            backdrop-filter: blur(18px);
+            box-shadow: 0 -12px 26px rgba(15,23,42,0.06);
+        }
+        .app-nav .tab-btn {
+            margin: 4px 4px 3px;
+            border-radius: 18px;
+            transition: background 0.18s ease, transform 0.18s ease;
+            padding-top: 0.55rem !important;
+            padding-bottom: 0.45rem !important;
+        }
+        .app-nav .tab-btn.active {
+            background: linear-gradient(180deg, rgba(219,234,254,0.95), rgba(239,246,255,0.82));
+            transform: translateY(-1px);
+        }
+        .detail-video-card {
+            background: linear-gradient(135deg, rgba(226,232,240,0.9) 0%, rgba(241,245,249,0.92) 52%, rgba(219,234,254,0.75) 100%);
+            border: 1px solid rgba(191,219,254,0.65);
+            box-shadow: 0 18px 40px rgba(15,23,42,0.08);
+        }
+        .detail-video-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 20% 18%, rgba(255,255,255,0.45), transparent 28%), radial-gradient(circle at 80% 82%, rgba(59,130,246,0.14), transparent 26%);
+            pointer-events: none;
+        }
+        .detail-stat-card,
+        .detail-rest-card,
+        .detail-note-card,
+        .detail-panel {
+            background: var(--app-surface-strong);
+            border: 1px solid rgba(148,163,184,0.16);
+            box-shadow: 0 14px 30px rgba(15,23,42,0.06);
+            backdrop-filter: blur(10px);
+        }
+        .detail-stat-card,
+        .detail-rest-card {
+            border-radius: 22px;
+        }
+        .detail-textarea {
+            background: rgba(248,250,252,0.9) !important;
+            border-color: rgba(148,163,184,0.18) !important;
+            min-height: 96px;
+        }
+        .detail-helper-copy {
+            margin-top: 0.85rem;
+            font-size: 0.75rem;
+            line-height: 1.45;
+            text-align: center;
+            color: #64748b;
+        }
+        .profile-hero-card {
+            background: linear-gradient(135deg, rgba(239,246,255,0.98) 0%, rgba(255,255,255,0.88) 48%, rgba(236,253,245,0.82) 100%);
+            border-color: rgba(191,219,254,0.92) !important;
+            box-shadow: 0 18px 40px rgba(37,99,235,0.1) !important;
+        }
+        .profile-hero-card .section-pill {
+            background: rgba(255,255,255,0.8);
+        }
+        .profile-stat-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 0.75rem;
+        }
+        .profile-stat-card {
+            padding: 0.95rem 1rem;
+            border-radius: 20px;
+            background: rgba(248,250,252,0.8);
+            border: 1px solid rgba(226,232,240,0.92);
+        }
+        .profile-stat-card-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.14em;
+            color: #94a3b8;
+            font-weight: 700;
+        }
+        .profile-stat-card .text-lg {
+            letter-spacing: -0.03em;
+        }
+        .chart-shell {
+            background: linear-gradient(180deg, rgba(248,250,252,0.94), rgba(255,255,255,0.88));
+            border-color: rgba(226,232,240,0.9) !important;
+        }
+        .reminder-entry {
+            box-shadow: 0 12px 24px rgba(15,23,42,0.05);
+        }
+        .progress-day-card {
+            text-align: center;
+        }
+        .progress-day-track {
+            height: 5rem;
+            display: flex;
+            align-items: end;
+            justify-content: center;
+            padding: 0.5rem;
+            border-radius: 18px;
+            background: rgba(248,250,252,0.88);
+            border: 1px solid rgba(226,232,240,0.92);
+        }
+        .progress-day-fill {
+            width: 100%;
+            min-height: 1.75rem;
+            border-radius: 14px;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.3), 0 8px 18px rgba(15,23,42,0.08);
         }
 
         /* Stepper controls */
@@ -83,7 +491,7 @@
 </head>
 <body>
 
-<div class="phone-frame bg-white">
+<div class="phone-frame app-shell bg-white">
 
     <!-- ===== SCREEN: HOME ===== -->
     <div id="screen-home" class="screen active fade-in">
@@ -96,13 +504,29 @@
         </div>
 
         <!-- Greeting -->
-        <div class="px-5 pt-2 pb-4">
-            <h1 class="text-2xl font-bold text-gray-900">Bonjour Marc</h1>
-            <p class="text-sm text-gray-500 mt-1">Ton prochain RDV : <span class="text-primary-600 font-medium">Jeudi 10 avril, 14h</span></p>
+        <div class="px-5 pt-2 pb-4 hero-panel">
+            <div class="hero-header">
+                <div class="hero-header-copy">
+                    <div class="section-kicker">Suivi du jour</div>
+                    <h1 class="text-2xl font-bold text-gray-900 mt-2">Bonjour Marc</h1>
+                </div>
+                <span class="hero-chip">Semaine 6</span>
+                <p class="hero-next-rdv-row text-sm text-gray-500">Ton prochain RDV : <span class="hero-next-rdv text-primary-600 font-medium">Jeudi 10 avril, 14h</span></p>
+            </div>
+            <div class="hero-meta-grid mt-4">
+                <div class="hero-meta-card">
+                    <span>Programme</span>
+                    <strong>3 exercices à faire aujourd'hui</strong>
+                </div>
+                <div class="hero-meta-card">
+                    <span>Journal</span>
+                    <strong>Un point rapide avant ou après la séance</strong>
+                </div>
+            </div>
         </div>
 
         <!-- Stats strip -->
-        <div class="px-5 mb-5">
+        <div class="px-5 mb-5 home-stats">
             <div class="flex gap-3">
                 <div class="flex-1 bg-primary-50 rounded-xl p-3 text-center">
                     <div class="text-2xl font-bold text-primary-600">5</div>
@@ -114,15 +538,16 @@
                 </div>
                 <div class="flex-1 bg-gray-50 rounded-xl p-3 text-center">
                     <div class="text-2xl font-bold text-gray-700">3/10</div>
-                    <div class="text-xs text-gray-500">douleur moy. 7j</div>
+                    <div class="text-xs text-gray-500">douleur avg</div>
                 </div>
             </div>
         </div>
 
         <!-- Today's exercises -->
         <div class="px-5 mb-4">
-            <div class="flex items-start justify-between gap-3 mb-3">
+            <div class="flex items-start justify-between gap-3 mb-4">
                 <div>
+                    <div class="section-kicker">Programme physio</div>
                     <h2 class="text-lg font-semibold text-gray-900">Exercices du jour</h2>
                     <div class="inline-flex items-center gap-1.5 mt-1 text-xs text-gray-500">
                         <svg class="w-4 h-4 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -131,12 +556,12 @@
                         <span id="exercise-total-time-value">Temps total en cours...</span>
                     </div>
                 </div>
-                <span class="text-xs text-gray-400" id="exercise-counter">0/3 valides</span>
+                <span class="section-pill" id="exercise-counter">0/3 faits</span>
             </div>
 
             <div class="space-y-3" id="exercise-list">
                 <!-- Exercise 1 -->
-                <div class="bg-white border border-gray-100 rounded-xl p-4 shadow-sm flex items-center gap-4 cursor-pointer" onclick="showExerciseDetail(0)">
+                <div class="exercise-card bg-white border border-gray-100 rounded-xl p-4 shadow-sm flex items-center gap-4 cursor-pointer" onclick="showExerciseDetail(0)">
                     <label class="flex-shrink-0" onclick="event.stopPropagation()">
                         <input type="checkbox" class="exercise-check hidden" onchange="updateExerciseCount()">
                         <div class="w-6 h-6 rounded-full border-2 border-gray-300 flex items-center justify-center check-circle">
@@ -161,13 +586,13 @@
                             </div>
                         </div>
                     </div>
-                    <div class="flex-shrink-0 w-10 h-10 bg-primary-50 rounded-lg flex items-center justify-center">
+                    <div class="exercise-card-icon flex-shrink-0 w-10 h-10 bg-primary-50 rounded-lg flex items-center justify-center">
                         <svg class="w-5 h-5 text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                     </div>
                 </div>
 
                 <!-- Exercise 2 -->
-                <div class="bg-white border border-gray-100 rounded-xl p-4 shadow-sm flex items-center gap-4 cursor-pointer" onclick="showExerciseDetail(1)">
+                <div class="exercise-card bg-white border border-gray-100 rounded-xl p-4 shadow-sm flex items-center gap-4 cursor-pointer" onclick="showExerciseDetail(1)">
                     <label class="flex-shrink-0" onclick="event.stopPropagation()">
                         <input type="checkbox" class="exercise-check hidden" onchange="updateExerciseCount()">
                         <div class="w-6 h-6 rounded-full border-2 border-gray-300 flex items-center justify-center check-circle">
@@ -192,13 +617,13 @@
                             </div>
                         </div>
                     </div>
-                    <div class="flex-shrink-0 w-10 h-10 bg-primary-50 rounded-lg flex items-center justify-center">
+                    <div class="exercise-card-icon flex-shrink-0 w-10 h-10 bg-primary-50 rounded-lg flex items-center justify-center">
                         <svg class="w-5 h-5 text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                     </div>
                 </div>
 
                 <!-- Exercise 3 -->
-                <div class="bg-white border border-gray-100 rounded-xl p-4 shadow-sm flex items-center gap-4 cursor-pointer" onclick="showExerciseDetail(2)">
+                <div class="exercise-card bg-white border border-gray-100 rounded-xl p-4 shadow-sm flex items-center gap-4 cursor-pointer" onclick="showExerciseDetail(2)">
                     <label class="flex-shrink-0" onclick="event.stopPropagation()">
                         <input type="checkbox" class="exercise-check hidden" onchange="updateExerciseCount()">
                         <div class="w-6 h-6 rounded-full border-2 border-gray-300 flex items-center justify-center check-circle">
@@ -219,11 +644,11 @@
                                 <svg class="w-3.5 h-3.5 text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l2.5 2.5M12 3v2m6.364.636l-1.414 1.414M21 12h-2M5 12H3m3.05-6.364l1.414 1.414M12 19v2m6.364-2.636l-1.414-1.414M6.464 18.364l1.414-1.414M12 21a9 9 0 100-18 9 9 0 000 18z"/>
                                 </svg>
-                                <span id="exercise-rest-exercise-label-2">Pas de pause apres</span>
+                                <span id="exercise-rest-exercise-label-2">Pas de pause après</span>
                             </div>
                         </div>
                     </div>
-                    <div class="flex-shrink-0 w-10 h-10 bg-primary-50 rounded-lg flex items-center justify-center">
+                    <div class="exercise-card-icon flex-shrink-0 w-10 h-10 bg-primary-50 rounded-lg flex items-center justify-center">
                         <svg class="w-5 h-5 text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                     </div>
                 </div>
@@ -232,22 +657,22 @@
 
         <!-- Quick log FAB -->
         <div class="px-5 mb-6">
-            <button onclick="openLogTab()" class="w-full bg-primary-600 text-white rounded-xl py-3.5 font-medium text-sm shadow-lg shadow-primary-600/20 flex items-center justify-center gap-3 hover:bg-primary-700 transition">
+            <button onclick="openLogTab()" class="hero-cta w-full bg-primary-600 text-white rounded-xl py-3.5 font-medium text-sm shadow-lg shadow-primary-600/20 flex items-center justify-center gap-3 hover:bg-primary-700 transition">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
                 <div class="text-left">
-                    <div>Faire le check-in du jour</div>
-                    <div class="text-xs text-primary-100 font-normal mt-0.5">2 min, douleur, energie et sommeil</div>
+                    <div>Comment tu te sens aujourd'hui ?</div>
+                    <div class="text-xs text-primary-100 font-normal mt-0.5">Journal rapide, douleur, énergie et sommeil</div>
                 </div>
             </button>
         </div>
 
         <!-- Reminder card -->
         <div class="px-5 mb-6">
-            <div class="bg-warning-50 border border-warning-100 rounded-xl p-4 flex items-start gap-3">
+            <div class="notice-card bg-warning-50 border border-warning-100 rounded-xl p-4 flex items-start gap-3">
                 <svg class="w-5 h-5 text-warning-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                 <div>
                     <div class="text-sm font-medium text-warning-600">Rappel de Dr. Tremblay</div>
-                    <div class="text-xs text-warning-500 mt-0.5">Pense a glacer ton genou 15 min apres les squats</div>
+                    <div class="text-xs text-warning-500 mt-0.5">Pense a glacer ton genou 15 min après les squats</div>
                 </div>
             </div>
         </div>
@@ -257,13 +682,13 @@
             <div class="flex items-start justify-between gap-3 mb-3">
                 <div>
                     <h2 class="text-lg font-semibold text-gray-900">Ressources partagees par Dr. Tremblay</h2>
-                    <p class="text-sm text-gray-500 mt-1">Petits contenus utiles a relire entre deux seances.</p>
+                    <p class="text-sm text-gray-500 mt-1">Petits contenus utiles à relire entre deux séances.</p>
                 </div>
-                <span class="px-2.5 py-1 rounded-full bg-primary-50 text-primary-600 text-[11px] font-semibold">3 ressources</span>
+                <span class="ui-pill px-2.5 py-1 rounded-full bg-primary-50 text-primary-600 text-[11px] font-semibold">3 ressources</span>
             </div>
 
             <div class="space-y-3">
-                <div class="bg-white border border-gray-100 rounded-xl p-4 shadow-sm flex items-start gap-3">
+                <div class="resource-card bg-white border border-gray-100 rounded-xl p-4 shadow-sm flex items-start gap-3">
                     <div class="w-11 h-11 rounded-2xl bg-primary-50 flex items-center justify-center flex-shrink-0">
                         <svg class="w-5 h-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h8m-8 4h6M7 3h7l5 5v13a1 1 0 01-1 1H6a1 1 0 01-1-1V4a1 1 0 011-1z"/>
@@ -274,12 +699,12 @@
                             <div class="text-sm font-semibold text-gray-900">Guide glace et gonflement</div>
                             <span class="px-2 py-0.5 rounded-full bg-gray-100 text-gray-500 text-[11px] font-medium">PDF</span>
                         </div>
-                        <div class="text-xs text-gray-500 mt-1">Quand glacer, combien de temps, et quoi surveiller apres la seance.</div>
+                        <div class="text-xs text-gray-500 mt-1">Quand glacer, combien de temps, et quoi surveiller après la séance.</div>
                         <div class="text-[11px] text-primary-500 font-medium mt-2">Lecture rapide · 2 min</div>
                     </div>
                 </div>
 
-                <div class="bg-white border border-gray-100 rounded-xl p-4 shadow-sm flex items-start gap-3">
+                <div class="resource-card bg-white border border-gray-100 rounded-xl p-4 shadow-sm flex items-start gap-3">
                     <div class="w-11 h-11 rounded-2xl bg-success-50 flex items-center justify-center flex-shrink-0">
                         <svg class="w-5 h-5 text-success-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/>
@@ -296,7 +721,7 @@
                     </div>
                 </div>
 
-                <a href="https://www.footcaremd.org/resources/how-to-help/how-to-strengthen-your-ankle-after-a-sprain" target="_blank" rel="noopener noreferrer" class="bg-white border border-gray-100 rounded-xl p-4 shadow-sm flex items-start gap-3 hover:border-primary-200 hover:bg-primary-50/40 transition">
+                <a href="https://www.footcaremd.org/resources/how-to-help/how-to-strengthen-your-ankle-after-a-sprain" target="_blank" rel="noopener noreferrer" class="resource-card bg-white border border-gray-100 rounded-xl p-4 shadow-sm flex items-start gap-3 hover:border-primary-200 hover:bg-primary-50/40 transition">
                     <div class="w-11 h-11 rounded-2xl bg-warning-50 flex items-center justify-center flex-shrink-0">
                         <svg class="w-5 h-5 text-warning-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h6m0 0v6m0-6l-8 8M7 7h1m4 0h1M5 5h14a2 2 0 012 2v10a2 2 0 01-2 2H9l-4 3V7a2 2 0 012-2z"/>
@@ -305,10 +730,10 @@
                     <div class="flex-1 min-w-0">
                         <div class="flex items-center gap-2">
                             <div class="text-sm font-semibold text-gray-900">How to strengthen your ankle after a sprain</div>
-                            <span class="px-2 py-0.5 rounded-full bg-gray-100 text-gray-500 text-[11px] font-medium">Article · EN</span>
+                            <span class="px-2 py-0.5 rounded-full bg-gray-100 text-gray-500 text-[11px] font-medium">Article</span>
                         </div>
-                        <div class="text-xs text-gray-500 mt-1">Ressource externe en anglais sur le renforcement et la reprise apres entorse de cheville.</div>
-                        <div class="text-[11px] text-warning-500 font-medium mt-2">FootCareMD · Article externe</div>
+                        <div class="text-xs text-gray-500 mt-1">Ressource externe partagee par le docteur, en anglais, sur le renforcement et la reprise après entorse de cheville.</div>
+                        <div class="text-[11px] text-warning-500 font-medium mt-2">FootCareMD · Ouvrir le lien</div>
                     </div>
                 </a>
             </div>
@@ -320,13 +745,13 @@
         <div class="px-5 pt-4 pb-2">
             <div class="flex items-start justify-between gap-3">
                 <div>
-                    <div class="text-xs uppercase tracking-[0.14em] text-primary-500 font-semibold">Tout au meme endroit</div>
+                    <div class="text-xs uppercase tracking-[0.14em] text-primary-500 font-semibold">Tout au même endroit</div>
                     <h1 class="text-2xl font-bold text-gray-900 mt-1">Exercices</h1>
-                    <p class="text-sm text-gray-500 mt-1">Ton entrainement quotidien et tes exercices de physio, sur une seule page.</p>
+                    <p class="text-sm text-gray-500 mt-1">Ton entraînement quotidien et tes exercices de physio, sur une seule page.</p>
                 </div>
                 <div class="text-right">
                     <div class="text-sm font-semibold text-primary-600" id="exercise-hub-count">6 exos aujourd'hui</div>
-                    <div class="text-[11px] text-gray-400" id="exercise-hub-subcount">3 physio + 3 entrainement quotidien</div>
+                    <div class="text-[11px] text-gray-400" id="exercise-hub-subcount">3 physio + 3 entraînement quotidien</div>
                 </div>
             </div>
         </div>
@@ -348,14 +773,15 @@
                         <div class="text-[11px] uppercase tracking-[0.14em] text-gray-400 font-semibold" id="exercise-detail-kicker">Programme physio</div>
                         <h1 class="text-lg font-semibold text-gray-900 mt-1" id="exercise-detail-name">Bird Dog</h1>
                     </div>
-                    <span id="exercise-detail-progress" class="hidden max-w-[45%] truncate px-2.5 py-1 rounded-full bg-warning-50 text-warning-600 text-[11px] font-semibold"></span>
+                    <span id="exercise-detail-progress" class="ui-pill hidden max-w-[45%] truncate px-2.5 py-1 rounded-full bg-warning-50 text-warning-600 text-[11px] font-semibold"></span>
                 </div>
             </div>
         </div>
 
         <!-- Video placeholder -->
         <div class="px-5 mt-3 mb-5">
-            <div class="bg-gray-100 rounded-2xl aspect-video flex items-center justify-center relative overflow-hidden">
+            <div class="detail-video-card bg-gray-100 rounded-2xl aspect-video flex items-center justify-center relative overflow-hidden">
+                <div class="absolute left-4 top-4 px-2.5 py-1 rounded-full bg-white/80 border border-white/90 text-[11px] font-semibold text-primary-700">Demonstration</div>
                 <div class="text-center">
                     <div class="w-16 h-16 bg-white/90 rounded-full flex items-center justify-center shadow-lg mx-auto mb-2">
                         <svg class="w-8 h-8 text-primary-600 ml-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"/></svg>
@@ -368,9 +794,10 @@
 
         <!-- Prescribed parameters (read-only) -->
         <div class="px-5 mb-3">
-            <div class="flex gap-3">
+            <div class="section-kicker">Prescription du jour</div>
+            <div class="flex gap-3 mt-3">
                 <!-- Sets (editable) -->
-                <div class="flex-1 bg-gray-50 rounded-xl p-3 text-center">
+                <div class="detail-stat-card flex-1 bg-gray-50 rounded-xl p-3 text-center">
                     <div class="stepper">
                         <button id="detail-sets-decrease" class="stepper-btn" onclick="adjustSets(-1)">&minus;</button>
                         <span class="stepper-value" id="detail-sets">3</span>
@@ -380,23 +807,23 @@
                     <div class="prescribed-label" id="prescribed-sets">prescrit: 3</div>
                 </div>
                 <!-- Reps (read-only prescribed value) -->
-                <div class="flex-1 bg-gray-50 rounded-xl p-3 text-center">
+                <div class="detail-stat-card flex-1 bg-gray-50 rounded-xl p-3 text-center">
                     <div class="text-lg font-bold text-gray-900" id="detail-reps">12</div>
                     <div class="text-xs text-gray-500">reps / serie</div>
                 </div>
                 <!-- Tempo -->
-                <div class="flex-1 bg-gray-50 rounded-xl p-3 text-center">
+                <div class="detail-stat-card flex-1 bg-gray-50 rounded-xl p-3 text-center">
                     <div class="text-lg font-bold text-gray-900" id="detail-tempo">2-1-2</div>
                     <div class="text-xs text-gray-500">tempo</div>
                 </div>
             </div>
             <div class="text-xs text-gray-400 mt-2" id="detail-source-label">Prescrit par Dr. Tremblay</div>
-            <div id="exercise-detail-preview-copy" class="hidden text-xs text-primary-500 mt-2">Apercu seulement. Utilise le bouton commencer sur le programme pour lancer la seance guidee.</div>
+            <div id="exercise-detail-preview-copy" class="hidden text-xs text-primary-500 mt-2">Aperçu seulement. Utilise le bouton commencer sur le programme pour lancer la séance guidée.</div>
         </div>
 
         <div class="px-5 mb-3">
             <div class="grid grid-cols-2 gap-3">
-                <div class="bg-gray-50 border border-gray-100 rounded-xl p-3">
+                <div class="detail-rest-card bg-gray-50 border border-gray-100 rounded-xl p-3">
                     <div class="flex items-center gap-2">
                         <div class="w-9 h-9 rounded-xl bg-white border border-gray-200 flex items-center justify-center">
                             <svg class="w-4 h-4 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -409,7 +836,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="bg-gray-50 border border-gray-100 rounded-xl p-3">
+                <div class="detail-rest-card bg-gray-50 border border-gray-100 rounded-xl p-3">
                     <div class="flex items-center gap-2">
                         <div class="w-9 h-9 rounded-xl bg-white border border-gray-200 flex items-center justify-center">
                             <svg class="w-4 h-4 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -445,9 +872,9 @@
 
         <!-- RPE Slider -->
         <div class="px-5 mb-5" id="exercise-detail-rpe-section">
-            <div class="bg-white border border-gray-100 rounded-xl p-4 shadow-sm">
+            <div class="detail-panel bg-white border border-gray-100 rounded-xl p-4 shadow-sm">
                 <div class="flex items-center justify-between mb-3">
-                    <label class="text-sm font-medium text-gray-700">Effort percu (Borg CR10)</label>
+                    <label class="text-sm font-medium text-gray-700">Effort perçu (Borg CR10)</label>
                     <span class="text-2xl" id="rpe-emoji">😐</span>
                 </div>
                 <input type="range" min="1" max="10" value="5" class="w-full slider-track" id="rpe-slider" oninput="updateRPE(this.value)">
@@ -458,9 +885,9 @@
                 </div>
                 <button onclick="openReference('effort', Number(document.getElementById('rpe-slider').value), 'exercise-detail')" class="w-full mt-3 text-left bg-primary-50 border border-primary-100 rounded-xl px-3 py-3 flex items-start justify-between gap-3">
                     <div class="min-w-0">
-                        <div class="text-[11px] uppercase tracking-[0.12em] text-primary-500 font-semibold">Repere officiel + le tien</div>
-                        <div class="text-sm font-medium text-gray-900 mt-1" id="exercise-rpe-memo">5/10 = effort soutenu, mais encore sous controle.</div>
-                        <div class="text-xs text-gray-500 mt-1" id="exercise-rpe-anchor">Ton repere : ajoute ce que ce score veut dire pour toi.</div>
+                        <div class="text-[11px] uppercase tracking-[0.12em] text-primary-500 font-semibold">Repère officiel + le tien</div>
+                        <div class="text-sm font-medium text-gray-900 mt-1" id="exercise-rpe-memo">5/10 = effort soutenu, mais encore sous contrôle.</div>
+                        <div class="text-xs text-gray-500 mt-1" id="exercise-rpe-anchor">Ton repère : ajoute ce que ce score veut dire pour toi.</div>
                     </div>
                     <svg class="w-4 h-4 text-primary-500 flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                 </button>
@@ -469,7 +896,7 @@
 
         <!-- Pain Slider -->
         <div class="px-5 mb-5" id="exercise-detail-pain-section">
-            <div class="bg-white border border-gray-100 rounded-xl p-4 shadow-sm">
+            <div class="detail-panel bg-white border border-gray-100 rounded-xl p-4 shadow-sm">
                 <div class="flex items-center justify-between mb-3">
                     <label class="text-sm font-medium text-gray-700">Douleur (0-10)</label>
                     <span class="text-2xl" id="pain-emoji">😊</span>
@@ -482,9 +909,9 @@
                 </div>
                 <button onclick="openReference('pain', Number(document.getElementById('pain-slider').value), 'exercise-detail')" class="w-full mt-3 text-left bg-danger-50 border border-danger-100 rounded-xl px-3 py-3 flex items-start justify-between gap-3">
                     <div class="min-w-0">
-                        <div class="text-[11px] uppercase tracking-[0.12em] text-danger-500 font-semibold">Repere officiel + le tien</div>
-                        <div class="text-sm font-medium text-gray-900 mt-1" id="exercise-pain-memo">2/10 = douleur legere, presente mais facile a gerer.</div>
-                        <div class="text-xs text-gray-500 mt-1" id="exercise-pain-anchor">Ton repere : ajoute ce que ce score veut dire pour toi.</div>
+                        <div class="text-[11px] uppercase tracking-[0.12em] text-danger-500 font-semibold">Repère officiel + le tien</div>
+                        <div class="text-sm font-medium text-gray-900 mt-1" id="exercise-pain-memo">2/10 = douleur légère, présente mais facile a gérer.</div>
+                        <div class="text-xs text-gray-500 mt-1" id="exercise-pain-anchor">Ton repère : ajoute ce que ce score veut dire pour toi.</div>
                     </div>
                     <svg class="w-4 h-4 text-danger-500 flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                 </button>
@@ -493,7 +920,16 @@
 
         <!-- Notes -->
         <div class="px-5 mb-5" id="exercise-detail-notes-section">
-            <textarea placeholder="Note rapide pour ton physio (optionnel)" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-4 text-sm text-gray-700 resize-none focus:outline-none focus:ring-2 focus:ring-primary-200 focus:border-primary-400" rows="3"></textarea>
+            <div class="detail-note-card rounded-2xl p-4">
+                <div class="flex items-center justify-between gap-3 mb-3">
+                    <div>
+                        <div class="text-sm font-semibold text-gray-900">Notes</div>
+                        <div class="text-xs text-gray-500 mt-1">Optionnel</div>
+                    </div>
+                    <span class="section-pill">Pour ton physio</span>
+                </div>
+                <textarea placeholder="Sensations, commentaires..." class="detail-textarea w-full bg-gray-50 border border-gray-200 rounded-xl p-4 text-sm text-gray-700 resize-none focus:outline-none focus:ring-2 focus:ring-primary-200 focus:border-primary-400" rows="3"></textarea>
+            </div>
         </div>
 
         <!-- Complete button -->
@@ -502,6 +938,7 @@
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
                 <span id="complete-exercise-label">Marquer comme fait</span>
             </button>
+            <div class="detail-helper-copy">Tes notes, ton effort et ta douleur sont gardes avec l'exercice pour le prochain suivi.</div>
         </div>
     </div>
 
@@ -528,7 +965,7 @@
                         <div class="text-sm font-semibold text-gray-900 mt-1" id="exercise-session-phase-title">Valide ta serie</div>
                         <div class="text-xs text-gray-500 mt-1" id="exercise-session-phase-copy">Entre tes reps et ton feedback avant la prochaine pause.</div>
                     </div>
-                    <span id="exercise-session-phase-badge" class="px-2.5 py-1 rounded-full bg-primary-50 text-primary-600 text-[11px] font-semibold">Active</span>
+                    <span id="exercise-session-phase-badge" class="ui-pill px-2.5 py-1 rounded-full bg-primary-50 text-primary-600 text-[11px] font-semibold">Active</span>
                 </div>
             </div>
         </div>
@@ -603,9 +1040,9 @@
                     </div>
                     <button onclick="openReference('pain', Number(document.getElementById('exercise-session-pain-slider').value), 'exercise-session')" class="w-full mt-3 text-left bg-danger-50 border border-danger-100 rounded-xl px-3 py-3 flex items-start justify-between gap-3">
                         <div class="min-w-0">
-                            <div class="text-[11px] uppercase tracking-[0.12em] text-danger-500 font-semibold">Repere officiel + le tien</div>
-                            <div class="text-sm font-medium text-gray-900 mt-1" id="exercise-session-pain-memo">2/10 = douleur legere, presente mais facile a gerer.</div>
-                            <div class="text-xs text-gray-500 mt-1" id="exercise-session-pain-anchor">Ton repere : ajoute ce que ce score veut dire pour toi.</div>
+                            <div class="text-[11px] uppercase tracking-[0.12em] text-danger-500 font-semibold">Repère officiel + le tien</div>
+                            <div class="text-sm font-medium text-gray-900 mt-1" id="exercise-session-pain-memo">2/10 = douleur légère, présente mais facile a gérer.</div>
+                            <div class="text-xs text-gray-500 mt-1" id="exercise-session-pain-anchor">Ton repère : ajoute ce que ce score veut dire pour toi.</div>
                         </div>
                         <svg class="w-4 h-4 text-danger-500 flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                     </button>
@@ -615,7 +1052,7 @@
             <div class="px-5 mb-5">
                 <div class="bg-white border border-gray-100 rounded-xl p-4 shadow-sm">
                     <div class="flex items-center justify-between mb-3">
-                        <label class="text-sm font-medium text-gray-700">Effort percu (Borg CR10)</label>
+                        <label class="text-sm font-medium text-gray-700">Effort perçu (Borg CR10)</label>
                         <span class="text-2xl" id="exercise-session-effort-emoji">😐</span>
                     </div>
                     <input type="range" min="1" max="10" value="5" class="w-full slider-track" id="exercise-session-effort-slider" oninput="updateExerciseSessionEffort(this.value)">
@@ -626,9 +1063,9 @@
                     </div>
                     <button onclick="openReference('effort', Number(document.getElementById('exercise-session-effort-slider').value), 'exercise-session')" class="w-full mt-3 text-left bg-primary-50 border border-primary-100 rounded-xl px-3 py-3 flex items-start justify-between gap-3">
                         <div class="min-w-0">
-                            <div class="text-[11px] uppercase tracking-[0.12em] text-primary-500 font-semibold">Repere officiel + le tien</div>
-                            <div class="text-sm font-medium text-gray-900 mt-1" id="exercise-session-effort-memo">5/10 = effort soutenu, mais encore sous controle.</div>
-                            <div class="text-xs text-gray-500 mt-1" id="exercise-session-effort-anchor">Ton repere : ajoute ce que ce score veut dire pour toi.</div>
+                            <div class="text-[11px] uppercase tracking-[0.12em] text-primary-500 font-semibold">Repère officiel + le tien</div>
+                            <div class="text-sm font-medium text-gray-900 mt-1" id="exercise-session-effort-memo">5/10 = effort soutenu, mais encore sous contrôle.</div>
+                            <div class="text-xs text-gray-500 mt-1" id="exercise-session-effort-anchor">Ton repère : ajoute ce que ce score veut dire pour toi.</div>
                         </div>
                         <svg class="w-4 h-4 text-primary-500 flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                     </button>
@@ -691,7 +1128,7 @@
                 <div class="flex items-center justify-between gap-3">
                     <div>
                         <div class="text-sm font-semibold text-gray-900">Exercices a inclure</div>
-                        <div class="text-xs text-gray-400 mt-1">Version simple de depart: pull up, push up et squat.</div>
+                        <div class="text-xs text-gray-400 mt-1">Mockup simple: pull up, push up et squat.</div>
                     </div>
                     <span class="text-[11px] uppercase tracking-[0.12em] text-primary-500 font-semibold">Selection rapide</span>
                 </div>
@@ -700,7 +1137,7 @@
 
             <div class="bg-primary-50 border border-primary-100 rounded-2xl p-4 mb-5">
                 <div class="text-sm font-semibold text-primary-700">Pourquoi separer Routine de Prescrit</div>
-                <div class="text-sm text-gray-700 mt-2">Le dossier routine garde tes habitudes gym personnelles sans melanger ce que ton physio t'a prescrit pour la rehab.</div>
+                <div class="text-sm text-gray-700 mt-2">Le dossier routine garde tes habitudes gym personnelles sans mélanger ce que ton physio t'a prescrit pour la réhab.</div>
             </div>
 
             <button onclick="saveRoutineBuilder()" class="w-full bg-primary-600 text-white rounded-xl py-3.5 font-medium text-sm shadow-lg shadow-primary-600/20 hover:bg-primary-700 transition">
@@ -712,20 +1149,23 @@
     <!-- ===== SCREEN: DAILY LOG ===== -->
     <div id="screen-log" class="screen fade-in">
         <div class="px-5 pt-4 pb-2">
-            <h1 class="text-2xl font-bold text-gray-900">Check-in du jour</h1>
+            <h1 class="text-2xl font-bold text-gray-900">Journal du jour</h1>
             <p class="text-sm text-gray-500 mt-1">Dimanche 6 avril 2026</p>
         </div>
 
         <!-- Daily wellness intro -->
         <div class="px-5 mt-3 mb-5">
             <div class="bg-white border border-gray-100 rounded-xl p-4 shadow-sm">
-                <div class="flex items-start justify-between gap-3">
+                <div class="flex items-start gap-3">
                     <div class="min-w-0">
                         <div class="text-[11px] uppercase tracking-[0.12em] text-primary-500 font-semibold">Wellness quotidien</div>
                         <div class="text-sm font-semibold text-gray-900 mt-1">Comment tu te sens aujourd'hui ?</div>
-                        <div class="text-xs text-gray-500 mt-1">Un check-in rapide, independant de ta seance, pour suivre ta douleur generale, ton energie et ton sommeil.</div>
+                        <div class="text-xs text-gray-500 mt-1">Un check-in rapide, indépendant de ta séance, pour suivre ta douleur générale, ton énergie et ton sommeil.</div>
+                        <div class="flex items-center gap-2 mt-3 text-[11px] font-medium text-primary-600">
+                            <span class="w-1.5 h-1.5 rounded-full bg-primary-500"></span>
+                            <span>1 / jour</span>
+                        </div>
                     </div>
-                    <span class="px-2.5 py-1 rounded-full bg-primary-50 text-primary-600 text-[11px] font-semibold">1 fois / jour</span>
                 </div>
             </div>
         </div>
@@ -734,7 +1174,7 @@
         <div class="px-5 mb-5">
             <div class="bg-white border border-gray-100 rounded-xl p-5 shadow-sm">
                 <div class="flex items-center justify-between mb-4">
-                    <label class="text-sm font-medium text-gray-700">Douleur generale (0-10)</label>
+                    <label class="text-sm font-medium text-gray-700">Douleur générale (0-10)</label>
                     <span class="text-3xl" id="log-pain-emoji">😊</span>
                 </div>
                 <input type="range" min="0" max="10" value="3" class="w-full slider-track" id="log-pain-slider" oninput="updateLogPain(this.value)">
@@ -745,9 +1185,9 @@
                 </div>
                 <button onclick="openReference('pain', Number(document.getElementById('log-pain-slider').value), 'log')" class="w-full mt-4 text-left bg-danger-50 border border-danger-100 rounded-xl px-3 py-3 flex items-start justify-between gap-3">
                     <div class="min-w-0">
-                        <div class="text-[11px] uppercase tracking-[0.12em] text-danger-500 font-semibold">Repere officiel + le tien</div>
+                        <div class="text-[11px] uppercase tracking-[0.12em] text-danger-500 font-semibold">Repère officiel + le tien</div>
                         <div class="text-sm font-medium text-gray-900 mt-1" id="log-pain-memo">3/10 = douleur claire, mais encore supportable.</div>
-                        <div class="text-xs text-gray-500 mt-1" id="log-pain-anchor">Ton repere : ajoute ce que ce score veut dire pour toi.</div>
+                        <div class="text-xs text-gray-500 mt-1" id="log-pain-anchor">Ton repère : ajoute ce que ce score veut dire pour toi.</div>
                     </div>
                     <svg class="w-4 h-4 text-danger-500 flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                 </button>
@@ -772,7 +1212,7 @@
         <!-- Sleep -->
         <div class="px-5 mb-5">
             <div class="bg-white border border-gray-100 rounded-xl p-5 shadow-sm">
-                <label class="text-sm font-medium text-gray-700 block mb-3">Qualite du sommeil</label>
+                <label class="text-sm font-medium text-gray-700 block mb-3">Qualité du sommeil</label>
                 <div class="flex gap-2 justify-center" id="sleep-stars">
                     <button onclick="setStars('sleep', 1)" class="text-3xl star-btn text-purple-400">&#9733;</button>
                     <button onclick="setStars('sleep', 2)" class="text-3xl star-btn text-purple-400">&#9733;</button>
@@ -786,13 +1226,13 @@
 
         <!-- Free text -->
         <div class="px-5 mb-5">
-            <textarea id="log-notes" placeholder="Ex.: douleur 2 h apres, genou plus raide ce matin, ou question pour le prochain RDV." class="w-full bg-gray-50 border border-gray-200 rounded-xl p-4 text-sm text-gray-700 resize-none focus:outline-none focus:ring-2 focus:ring-primary-200 focus:border-primary-400" rows="3"></textarea>
+            <textarea id="log-notes" placeholder="Quelque chose à signaler ?" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-4 text-sm text-gray-700 resize-none focus:outline-none focus:ring-2 focus:ring-primary-200 focus:border-primary-400" rows="3"></textarea>
         </div>
 
         <!-- Submit -->
         <div class="px-5 mb-8">
             <button id="log-submit-btn" onclick="submitDailyWellness(this)" class="w-full bg-primary-600 text-white rounded-xl py-3.5 font-medium text-sm shadow-lg shadow-primary-600/20 hover:bg-primary-700 transition">
-                Envoyer le check-in du jour
+                Envoyer le journal du jour
             </button>
         </div>
     </div>
@@ -805,7 +1245,7 @@
             </button>
             <div class="min-w-0 flex-1">
                 <div class="text-xs uppercase tracking-[0.18em] text-gray-400 font-semibold">Evaluation post-workout</div>
-                <h1 class="text-lg font-semibold text-gray-900" id="post-workout-title">Apres l'entrainement</h1>
+                <h1 class="text-lg font-semibold text-gray-900" id="post-workout-title">Après l'entraînement</h1>
             </div>
         </div>
 
@@ -814,10 +1254,10 @@
                 <div class="flex items-start justify-between gap-3 mb-3">
                     <div>
                         <div class="text-[11px] uppercase tracking-[0.12em] text-primary-500 font-semibold">Suivi de session</div>
-                        <div class="text-sm font-semibold text-gray-900 mt-1">Evaluations post-entrainement</div>
-                        <div class="text-xs text-gray-500 mt-1">Remplis chaque moment cle pour voir comment ton genou reagit apres la seance.</div>
+                        <div class="text-sm font-semibold text-gray-900 mt-1">Évaluations post-entraînement</div>
+                        <div class="text-xs text-gray-500 mt-1">Remplis chaque moment clé pour voir comment ton genou réagit après la séance.</div>
                     </div>
-                    <span id="post-workout-progress" class="px-2.5 py-1 rounded-full bg-primary-50 text-primary-600 text-[11px] font-semibold">0/4 faits</span>
+                    <span id="post-workout-progress" class="ui-pill px-2.5 py-1 rounded-full bg-primary-50 text-primary-600 text-[11px] font-semibold">0/4 faits</span>
                 </div>
                 <div class="space-y-2" id="post-workout-summary"></div>
             </div>
@@ -827,13 +1267,13 @@
             <div id="post-workout-selected-card" class="rounded-xl border border-warning-100 bg-warning-50 p-4">
                 <div class="flex items-start justify-between gap-3">
                     <div class="min-w-0">
-                        <div class="text-[11px] uppercase tracking-[0.12em] text-warning-600 font-semibold" id="post-workout-kicker">Seance renfo du jour</div>
-                        <div class="text-base font-semibold text-gray-900 mt-1" id="post-workout-selected-title">Apres l'entrainement</div>
-                        <div class="text-xs text-gray-500 mt-1" id="post-workout-selected-timing">Aujourd'hui · juste apres la seance</div>
+                        <div class="text-[11px] uppercase tracking-[0.12em] text-warning-600 font-semibold" id="post-workout-kicker">Séance renfo du jour</div>
+                        <div class="text-base font-semibold text-gray-900 mt-1" id="post-workout-selected-title">Après l'entraînement</div>
+                        <div class="text-xs text-gray-500 mt-1" id="post-workout-selected-timing">Aujourd'hui · juste après la séance</div>
                     </div>
-                    <span id="post-workout-selected-status" class="px-2.5 py-1 rounded-full bg-warning-100 text-warning-700 text-[11px] font-semibold">A faire</span>
+                    <span id="post-workout-selected-status" class="ui-pill px-2.5 py-1 rounded-full bg-warning-100 text-warning-700 text-[11px] font-semibold">À faire</span>
                 </div>
-                <div class="text-sm text-gray-700 mt-3" id="post-workout-prompt">Comment tu te sens juste apres la seance ? Douleur, fatigue ou confiance dans le genou ?</div>
+                <div class="text-sm text-gray-700 mt-3" id="post-workout-prompt">Comment tu te sens juste après la séance ? Douleur, fatigue ou confiance dans le genou ?</div>
             </div>
         </div>
 
@@ -851,9 +1291,9 @@
                 </div>
                 <button onclick="openReference('pain', Number(document.getElementById('post-workout-pain-slider').value), 'post-workout-checkin')" class="w-full mt-4 text-left bg-danger-50 border border-danger-100 rounded-xl px-3 py-3 flex items-start justify-between gap-3">
                     <div class="min-w-0">
-                        <div class="text-[11px] uppercase tracking-[0.12em] text-danger-500 font-semibold">Repere officiel + le tien</div>
+                        <div class="text-[11px] uppercase tracking-[0.12em] text-danger-500 font-semibold">Repère officiel + le tien</div>
                         <div class="text-sm font-medium text-gray-900 mt-1" id="post-workout-pain-memo">3/10 = douleur claire, mais encore supportable.</div>
-                        <div class="text-xs text-gray-500 mt-1" id="post-workout-pain-anchor">Ton repere : ajoute ce que ce score veut dire pour toi.</div>
+                        <div class="text-xs text-gray-500 mt-1" id="post-workout-pain-anchor">Ton repère : ajoute ce que ce score veut dire pour toi.</div>
                     </div>
                     <svg class="w-4 h-4 text-danger-500 flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                 </button>
@@ -874,9 +1314,9 @@
                 </div>
                 <button onclick="openReference('effort', Number(document.getElementById('post-workout-effort-slider').value), 'post-workout-checkin')" class="w-full mt-4 text-left bg-primary-50 border border-primary-100 rounded-xl px-3 py-3 flex items-start justify-between gap-3">
                     <div class="min-w-0">
-                        <div class="text-[11px] uppercase tracking-[0.12em] text-primary-500 font-semibold">Repere officiel + le tien</div>
-                        <div class="text-sm font-medium text-gray-900 mt-1" id="post-workout-effort-memo">4/10 = modere, ca travaille pour vrai.</div>
-                        <div class="text-xs text-gray-500 mt-1" id="post-workout-effort-anchor">Ton repere : ajoute ce que ce score veut dire pour toi.</div>
+                        <div class="text-[11px] uppercase tracking-[0.12em] text-primary-500 font-semibold">Repère officiel + le tien</div>
+                        <div class="text-sm font-medium text-gray-900 mt-1" id="post-workout-effort-memo">4/10 = modéré, ça travaille pour vrai.</div>
+                        <div class="text-xs text-gray-500 mt-1" id="post-workout-effort-anchor">Ton repère : ajoute ce que ce score veut dire pour toi.</div>
                     </div>
                     <svg class="w-4 h-4 text-primary-500 flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                 </button>
@@ -886,7 +1326,7 @@
         <!-- Future V1: if douleur > 0, add the tappable body map here. Keep the current anatomy drawing asset and do not implement it in V0. -->
 
         <div class="px-5 mb-5">
-            <textarea id="post-workout-notes" placeholder="Ex.: douleur qui redescend bien, fatigue qui reste, ou mouvement encore limite." class="w-full bg-gray-50 border border-gray-200 rounded-xl p-4 text-sm text-gray-700 resize-none focus:outline-none focus:ring-2 focus:ring-primary-200 focus:border-primary-400" rows="3"></textarea>
+            <textarea id="post-workout-notes" placeholder="Quelque chose à signaler après la séance ?" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-4 text-sm text-gray-700 resize-none focus:outline-none focus:ring-2 focus:ring-primary-200 focus:border-primary-400" rows="3"></textarea>
         </div>
 
         <div class="px-5 mb-8">
@@ -898,7 +1338,7 @@
 
     <!-- ===== SCREEN: MESSAGES ===== -->
     <div id="screen-messages" class="screen fade-in">
-        <div class="px-5 pt-4 pb-3 border-b border-gray-100">
+        <div class="messages-header px-5 pt-4 pb-3 border-b border-gray-100">
             <div class="flex items-center gap-3">
                 <div class="w-10 h-10 bg-success-100 rounded-full flex items-center justify-center">
                     <span class="text-sm font-semibold text-success-600">DT</span>
@@ -914,10 +1354,20 @@
         </div>
 
         <!-- Chat messages -->
-        <div class="px-5 py-4 pb-32 space-y-4 overflow-y-auto" style="max-height: calc(100vh - 200px);">
+        <div class="messages-thread px-5 py-4 pb-40 space-y-4 overflow-y-auto" style="max-height: calc(100dvh - 228px);">
+            <div class="messages-summary-card rounded-2xl p-4">
+                <div class="flex items-start justify-between gap-3">
+                    <div>
+                        <div class="section-kicker">Derniere consigne</div>
+                        <div class="text-sm font-semibold text-gray-900 mt-2">Squats a 8 reps cette semaine</div>
+                        <div class="text-xs text-gray-500 mt-1">Continue a glacer 15 min après l'exercice.</div>
+                    </div>
+                    <span class="section-pill">Vendredi</span>
+                </div>
+            </div>
             <!-- Date separator -->
             <div class="text-center">
-                <span class="text-xs text-gray-400 bg-gray-50 px-3 py-1 rounded-full">Vendredi 4 avril</span>
+                <span class="thread-chip text-xs text-gray-400 bg-gray-50 px-3 py-1 rounded-full">Vendredi 4 avril</span>
             </div>
 
             <!-- Physio message -->
@@ -925,16 +1375,16 @@
                 <div class="w-7 h-7 bg-success-100 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
                     <span class="text-xs font-semibold text-success-600">DT</span>
                 </div>
-                <div class="bg-gray-100 rounded-2xl rounded-tl-md px-4 py-3 max-w-[80%]">
-                    <p class="text-sm text-gray-800">Comment va le genou depuis la seance de lundi ?</p>
+                <div class="message-bubble message-bubble-incoming bg-gray-100 rounded-2xl rounded-tl-md px-4 py-3 max-w-[80%]">
+                    <p class="text-sm text-gray-800">Comment va le genou depuis la séance de lundi ?</p>
                     <span class="text-xs text-gray-400 mt-1 block">10:32</span>
                 </div>
             </div>
 
             <!-- Patient message -->
             <div class="flex gap-2 justify-end">
-                <div class="bg-primary-600 rounded-2xl rounded-tr-md px-4 py-3 max-w-[80%]">
-                    <p class="text-sm text-white">Un peu sensible mais ca s'ameliore. Les squats sont encore durs par contre.</p>
+                <div class="message-bubble message-bubble-outgoing bg-primary-600 rounded-2xl rounded-tr-md px-4 py-3 max-w-[80%]">
+                    <p class="text-sm text-white">Un peu sensible mais ça s'améliore. Les squats sont encore durs par contre.</p>
                     <span class="text-xs text-primary-200 mt-1 block">10:45</span>
                 </div>
             </div>
@@ -944,15 +1394,15 @@
                 <div class="w-7 h-7 bg-success-100 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
                     <span class="text-xs font-semibold text-success-600">DT</span>
                 </div>
-                <div class="bg-gray-100 rounded-2xl rounded-tl-md px-4 py-3 max-w-[80%]">
-                    <p class="text-sm text-gray-800">OK, reduis les squats a 8 reps au lieu de 10 pour cette semaine. Continue a glacer apres.</p>
+                <div class="message-bubble message-bubble-incoming bg-gray-100 rounded-2xl rounded-tl-md px-4 py-3 max-w-[80%]">
+                    <p class="text-sm text-gray-800">OK, réduis les squats à 8 reps au lieu de 10 pour cette semaine. Continue à glacer après.</p>
                     <span class="text-xs text-gray-400 mt-1 block">11:02</span>
                 </div>
             </div>
 
             <!-- Date separator -->
             <div class="text-center">
-                <span class="text-xs text-gray-400 bg-gray-50 px-3 py-1 rounded-full">Aujourd'hui</span>
+                <span class="thread-chip text-xs text-gray-400 bg-gray-50 px-3 py-1 rounded-full">Aujourd'hui</span>
             </div>
 
             <!-- AI recap message -->
@@ -960,29 +1410,29 @@
                 <div class="w-7 h-7 bg-primary-100 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
                     <svg class="w-4 h-4 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
                 </div>
-                <div class="bg-primary-50 border border-primary-100 rounded-2xl rounded-tl-md px-4 py-3 max-w-[85%]">
+                <div class="message-bubble message-bubble-ai bg-primary-50 border border-primary-100 rounded-2xl rounded-tl-md px-4 py-3 max-w-[85%]">
                     <div class="flex items-center gap-1 mb-1">
-                        <span class="text-xs font-semibold text-primary-600">Resume IA</span>
+                        <span class="text-xs font-semibold text-primary-600">Recap IA</span>
                         <span class="text-xs bg-primary-100 text-primary-600 px-1.5 py-0.5 rounded-full">auto</span>
                     </div>
                     <p class="text-sm text-gray-700">
-                        <strong>Seance du 3 avril :</strong> Travail sur flexion du genou + renforcement quad.
+                        <strong>Séance du 3 avril :</strong> Travail sur flexion du genou + renforcement quad.
                         Progression: amplitude +5 degres.
                         <br><br>
-                        <strong>A faire :</strong> Bird dogs 3x/jour, squats reduits a 8 reps, glacer 15 min post-exercice.
+                        <strong>À faire :</strong> Bird dogs 3x/jour, squats réduits à 8 reps, glacer 15 min post-exercice.
                         <br><br>
                         <strong>Prochain RDV :</strong> Jeudi 10 avril, 14h
                     </p>
-                    <span class="text-xs text-primary-400 mt-2 block">Resume genere automatiquement</span>
+                    <span class="text-xs text-primary-400 mt-2 block">Genere automatiquement</span>
                 </div>
             </div>
         </div>
 
         <!-- Input -->
-        <div class="fixed bottom-16 left-0 right-0 bg-white border-t border-gray-100 px-4 py-3" style="max-width: 390px; margin: 0 auto;">
+        <div class="message-composer fixed bottom-16 left-0 right-0 bg-white border-t border-gray-100 px-4 py-3" style="max-width: 390px; margin: 0 auto;">
             <div class="flex gap-2">
-                <input type="text" placeholder="Ecrire un message..." class="flex-1 bg-gray-50 border border-gray-200 rounded-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-200">
-                <button class="w-10 h-10 bg-primary-600 rounded-full flex items-center justify-center flex-shrink-0">
+                <input type="text" placeholder="Ecrire un message..." class="message-input flex-1 bg-gray-50 border border-gray-200 rounded-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-200">
+                <button class="message-send-btn w-10 h-10 bg-primary-600 rounded-full flex items-center justify-center flex-shrink-0">
                     <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
                 </button>
             </div>
@@ -992,22 +1442,32 @@
     <!-- ===== SCREEN: PROFILE ===== -->
     <div id="screen-profile" class="screen fade-in">
         <div class="px-5 pt-4 pb-2">
+            <div class="section-kicker">Espace patient</div>
             <h1 class="text-2xl font-bold text-gray-900">Profil</h1>
         </div>
 
         <div class="px-5 mt-4">
             <!-- Profile card -->
-            <div class="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm text-center mb-5">
-                <div class="w-20 h-20 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                    <span class="text-2xl font-bold text-primary-600">ML</span>
+            <div class="profile-hero-card bg-white border border-gray-100 rounded-2xl p-5 shadow-sm mb-5">
+                <div class="flex items-start gap-4">
+                    <div class="w-20 h-20 bg-primary-100 rounded-full flex items-center justify-center flex-shrink-0">
+                        <span class="text-2xl font-bold text-primary-600">ML</span>
+                    </div>
+                    <div class="min-w-0 flex-1">
+                        <div class="section-kicker">Patient suivi</div>
+                        <h2 class="text-lg font-semibold text-gray-900 mt-2">Marc Levesque</h2>
+                        <div class="flex flex-wrap gap-2 mt-2">
+                            <span class="section-pill">34 ans</span>
+                            <span class="section-pill">Montreal</span>
+                        </div>
+                        <p class="text-sm text-primary-700 font-semibold mt-3">Reconstruction LCA • Semaine 6</p>
+                        <p class="text-xs text-gray-500 mt-1">Plan actif avec Dr. Tremblay</p>
+                    </div>
                 </div>
-                <h2 class="text-lg font-semibold text-gray-900">Marc Levesque</h2>
-                <p class="text-sm text-gray-500">34 ans &middot; Montreal</p>
-                <p class="text-sm text-primary-600 mt-1">Reconstruction LCA — Semaine 6</p>
             </div>
 
             <!-- Profile quick actions -->
-            <div class="grid grid-cols-3 gap-3 mb-5">
+            <div class="quick-action-grid grid grid-cols-3 gap-3 mb-5">
                 <button type="button" onclick="openHealthHistory()" class="bg-white border border-gray-100 rounded-2xl p-3 shadow-sm text-left">
                     <div class="w-10 h-10 rounded-xl bg-primary-50 flex items-center justify-center mb-3">
                         <svg class="w-5 h-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1015,7 +1475,7 @@
                         </svg>
                     </div>
                     <div class="text-sm font-semibold text-gray-900">Historique</div>
-                    <div class="text-[11px] text-gray-400 mt-1">Resume sante</div>
+                    <div class="text-[11px] text-gray-400 mt-1">Recap sante</div>
                 </button>
                 <button type="button" onclick="openProfileLexique()" class="bg-white border border-gray-100 rounded-2xl p-3 shadow-sm text-left">
                     <div class="w-10 h-10 rounded-xl bg-danger-50 flex items-center justify-center mb-3">
@@ -1039,23 +1499,32 @@
 
             <!-- Stats -->
             <div class="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm mb-5">
-                <h3 class="text-sm font-semibold text-gray-700 mb-3">Statistiques</h3>
-                <div class="space-y-3">
-                    <div class="flex justify-between">
-                        <span class="text-sm text-gray-500">Seances completees</span>
-                        <span class="text-sm font-semibold text-gray-900">12 / 16</span>
+                <div class="flex items-start justify-between gap-3 mb-4">
+                    <div>
+                        <h3 class="text-sm font-semibold text-gray-700">Statistiques</h3>
+                        <p class="text-xs text-gray-400 mt-1">Vue rapide de ta progression récente sur 7 jours.</p>
                     </div>
-                    <div class="flex justify-between">
-                        <span class="text-sm text-gray-500">Adherence exercices</span>
-                        <span class="text-sm font-semibold text-success-500">85%</span>
+                </div>
+                <div class="profile-stat-grid">
+                    <div class="profile-stat-card">
+                        <div class="profile-stat-card-label">Seances</div>
+                        <div class="text-lg font-bold text-gray-900 mt-2">12 / 16</div>
+                        <div class="text-xs text-gray-500 mt-1">completees</div>
                     </div>
-                    <div class="flex justify-between">
-                        <span class="text-sm text-gray-500">Jours consecutifs</span>
-                        <span class="text-sm font-semibold text-primary-600">5</span>
+                    <div class="profile-stat-card">
+                        <div class="profile-stat-card-label">Adherence</div>
+                        <div class="text-lg font-bold text-success-500 mt-2">85%</div>
+                        <div class="text-xs text-gray-500 mt-1">exercices</div>
                     </div>
-                    <div class="flex justify-between">
-                        <span class="text-sm text-gray-500">Douleur moyenne (7j)</span>
-                        <span class="text-sm font-semibold text-gray-900">3/10</span>
+                    <div class="profile-stat-card">
+                        <div class="profile-stat-card-label">Serie</div>
+                        <div class="text-lg font-bold text-primary-600 mt-2">5 jours</div>
+                        <div class="text-xs text-gray-500 mt-1">consecutifs</div>
+                    </div>
+                    <div class="profile-stat-card">
+                        <div class="profile-stat-card-label">Douleur</div>
+                        <div class="text-lg font-bold text-gray-900 mt-2">3/10</div>
+                        <div class="text-xs text-gray-500 mt-1">moyenne 7j</div>
                     </div>
                 </div>
             </div>
@@ -1076,13 +1545,13 @@
                     <button id="profile-strength-tab-reps" type="button" onclick="setStrengthProgressMetric('reps')" class="flex-1 px-3 py-2.5 text-sm font-medium rounded-xl border border-gray-200 bg-white text-gray-600">Reps</button>
                     <button id="profile-strength-tab-weight" type="button" onclick="setStrengthProgressMetric('weight')" class="flex-1 px-3 py-2.5 text-sm font-medium rounded-xl border border-gray-200 bg-white text-gray-600">Poids</button>
                 </div>
-                <div class="rounded-2xl border border-gray-100 bg-gray-50 p-4">
+                <div class="chart-shell rounded-2xl border border-gray-100 bg-gray-50 p-4">
                     <div class="flex items-center justify-between gap-3 mb-3">
                         <div>
                             <div class="text-sm font-semibold text-gray-900" id="profile-strength-chart-title">Squat</div>
-                            <div class="text-xs text-gray-500 mt-1" id="profile-strength-chart-subtitle">Progression des repetitions sur 6 semaines</div>
+                            <div class="text-xs text-gray-500 mt-1" id="profile-strength-chart-subtitle">Progression des répétitions sur 6 semaines</div>
                         </div>
-                        <span class="px-2.5 py-1 rounded-full bg-primary-50 text-primary-600 text-[11px] font-semibold" id="profile-strength-chart-unit">reps</span>
+                        <span class="ui-pill px-2.5 py-1 rounded-full bg-primary-50 text-primary-600 text-[11px] font-semibold" id="profile-strength-chart-unit">reps</span>
                     </div>
                     <div id="profile-strength-chart"></div>
                 </div>
@@ -1093,7 +1562,7 @@
                 <div class="flex items-start justify-between gap-3 mb-3">
                     <div>
                         <h3 class="text-sm font-semibold text-gray-700">Prochains rappels</h3>
-                        <p class="text-xs text-gray-400 mt-1">Petits prompts pour voir comment tu reagis apres le renforcement.</p>
+                        <p class="text-xs text-gray-400 mt-1">Petits prompts pour voir comment tu reagis après le renforcement.</p>
                     </div>
                     <span class="text-[11px] uppercase tracking-[0.12em] text-primary-500 font-semibold">Tap = check-in</span>
                 </div>
@@ -1105,7 +1574,7 @@
                 <div class="flex items-start justify-between gap-3 mb-4">
                     <div>
                         <h3 class="text-sm font-semibold text-gray-700">Progression et engagement</h3>
-                        <p class="text-xs text-gray-400 mt-1">Un apercu sur 7 jours: adherence aux exercices et effort moyen declare.</p>
+                        <p class="text-xs text-gray-400 mt-1">Un aperçu sur 7 jours : adhérence aux exercices et effort moyen déclaré.</p>
                     </div>
                     <div class="text-right">
                         <div class="text-lg font-bold text-gray-900" id="profile-effort-average">6.4/10</div>
@@ -1143,16 +1612,16 @@
                 </div>
             </div>
 
-            <!-- Connected devices -->
+            <!-- Connectéd devices -->
             <div class="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm mb-8">
-                <h3 class="text-sm font-semibold text-gray-700 mb-3">Appareils connectes</h3>
+                <h3 class="text-sm font-semibold text-gray-700 mb-3">Appareils connectés</h3>
                 <div class="flex items-center gap-3 mb-2">
                     <div class="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center">
                         <svg class="w-4 h-4 text-gray-500" fill="currentColor" viewBox="0 0 24 24"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
                     </div>
                     <div class="flex-1">
                         <div class="text-sm text-gray-700">Apple Watch</div>
-                        <div class="text-xs text-success-500">Connecte</div>
+                        <div class="text-xs text-success-500">Connecté</div>
                     </div>
                     <span class="w-2 h-2 bg-success-500 rounded-full"></span>
                 </div>
@@ -1209,22 +1678,22 @@
                 <div id="health-history-summary-content" class="mt-5 space-y-5">
                     <div>
                         <div class="text-sm font-semibold text-gray-900">Resume</div>
-                        <p class="text-sm text-gray-700 mt-2 leading-relaxed">Suivi en semaine 6 apres chirurgie. Objectif principal: retrouver confiance sur les exercices de renforcement, reduire la douleur residuelle apres l'effort et mieux suivre la reaction du genou entre les seances.</p>
+                        <p class="text-sm text-gray-700 mt-2 leading-relaxed">Suivi en semaine 6 après chirurgie. Objectif principal : retrouver confiance sur les exercices de renforcement, réduire la douleur résiduelle après l'effort et mieux suivre la réaction du genou entre les séances.</p>
                     </div>
 
                     <div class="pt-4 border-t border-gray-100">
-                        <div class="text-sm font-semibold text-gray-900 mb-3">Moments cles</div>
+                        <div class="text-sm font-semibold text-gray-900 mb-3">Moments clés</div>
                         <div class="space-y-4" id="health-history-timeline"></div>
                     </div>
 
                     <div class="grid grid-cols-1 gap-4">
                         <div class="bg-primary-50 border border-primary-100 rounded-2xl p-5">
                             <div class="text-sm font-semibold text-primary-700">Ce qui aide le plus</div>
-                            <div class="text-sm text-gray-700 mt-2">Progression graduelle, glace 15 min apres les squats, et consignes simples pour comparer douleur immediate, a 2 h, puis le lendemain matin.</div>
+                            <div class="text-sm text-gray-700 mt-2">Progression graduelle, glace 15 min après les squats, et consignes simples pour comparer douleur immédiate, a 2 h, puis le lendemain matin.</div>
                         </div>
                         <div class="bg-warning-50 border border-warning-100 rounded-2xl p-5">
                             <div class="text-sm font-semibold text-warning-600">Points a surveiller</div>
-                            <div class="text-sm text-gray-700 mt-2">Raideur marquee le lendemain, douleur qui grimpe pendant les squats, ou effort trop haut quand la forme se degrade.</div>
+                            <div class="text-sm text-gray-700 mt-2">Raideur marquee le lendemain, douleur qui grimpe pendant les squats, ou effort trop haut quand la forme se dégrade.</div>
                         </div>
                     </div>
                 </div>
@@ -1249,9 +1718,9 @@
                 <div class="flex items-start justify-between gap-3">
                     <div>
                         <h2 class="text-lg font-semibold text-gray-900">Les fiches de la semaine</h2>
-                        <p class="text-sm text-gray-500 mt-1">Des rappels courts pour mieux comprendre ce que tu observes entre deux seances.</p>
+                        <p class="text-sm text-gray-500 mt-1">Des rappels courts pour mieux comprendre ce que tu observes entre deux séances.</p>
                     </div>
-                    <span class="px-2.5 py-1 rounded-full bg-primary-50 text-primary-600 text-[11px] font-semibold">3 lectures</span>
+                    <span class="ui-pill px-2.5 py-1 rounded-full bg-primary-50 text-primary-600 text-[11px] font-semibold">3 lectures</span>
                 </div>
             </div>
 
@@ -1267,7 +1736,7 @@
                             <div class="text-sm font-semibold text-gray-900">Douleur vs effort</div>
                             <span class="px-2 py-0.5 rounded-full bg-gray-100 text-gray-500 text-[11px] font-medium">2 min</span>
                         </div>
-                        <p class="text-sm text-gray-600 mt-2 leading-relaxed">Quand ca chauffe pendant un exercice, le chiffre aide surtout a decrire ce qui monte, comment ca redescend, et si ta forme reste propre.</p>
+                        <p class="text-sm text-gray-600 mt-2 leading-relaxed">Quand ça chauffe pendant un exercice, le chiffre aide surtout à décrire ce qui monte, comment ça redescend, et si ta forme reste propre.</p>
                     </div>
                 </div>
             </div>
@@ -1281,10 +1750,10 @@
                     </div>
                     <div>
                         <div class="flex items-center gap-2 flex-wrap">
-                            <div class="text-sm font-semibold text-gray-900">Quoi observer apres la seance</div>
+                            <div class="text-sm font-semibold text-gray-900">Quoi observer après la séance</div>
                             <span class="px-2 py-0.5 rounded-full bg-gray-100 text-gray-500 text-[11px] font-medium">3 points</span>
                         </div>
-                        <p class="text-sm text-gray-600 mt-2 leading-relaxed">Regarde surtout trois moments simples: juste apres, 2 heures plus tard, puis le lendemain matin. C'est souvent la que le suivi devient utile pour le physio.</p>
+                        <p class="text-sm text-gray-600 mt-2 leading-relaxed">Regarde surtout trois moments simples: juste après, 2 heures plus tard, puis le lendemain matin. C'est souvent la que le suivi devient utile pour le physio.</p>
                     </div>
                 </div>
             </div>
@@ -1301,14 +1770,14 @@
                             <div class="text-sm font-semibold text-gray-900">Glace et retour au calme</div>
                             <span class="px-2 py-0.5 rounded-full bg-gray-100 text-gray-500 text-[11px] font-medium">Rappel</span>
                         </div>
-                        <p class="text-sm text-gray-600 mt-2 leading-relaxed">Si le genou chauffe apres les squats, garde le repere simple du plan actuel: 15 min de glace, puis observe si la lourdeur redescend normalement.</p>
+                        <p class="text-sm text-gray-600 mt-2 leading-relaxed">Si le genou chauffe après les squats, garde le repère simple du plan actuel: 15 min de glace, puis observe si la lourdeur redescend normalement.</p>
                     </div>
                 </div>
             </div>
 
             <div class="bg-primary-50 border border-primary-100 rounded-2xl p-4">
                 <div class="text-sm font-semibold text-primary-700">Le wiki peut grandir avec le suivi</div>
-                <div class="text-sm text-gray-700 mt-2">D'autres fiches courtes pourront s'ajouter selon la blessure, la phase de rehab et les questions qui reviennent souvent.</div>
+                <div class="text-sm text-gray-700 mt-2">D'autres fiches courtes pourront s'ajouter selon la blessure, la phase de réhab et les questions qui reviennent souvent.</div>
             </div>
         </div>
     </div>
@@ -1328,7 +1797,7 @@
         <div class="px-5 mt-3 pb-8">
             <div class="flex gap-2 mb-4">
                 <button id="reference-tab-pain" onclick="switchReferenceScale('pain')" class="flex-1 px-3 py-2.5 text-sm font-medium rounded-xl border border-gray-200 bg-white text-gray-600">Douleur</button>
-                <button id="reference-tab-effort" onclick="switchReferenceScale('effort')" class="flex-1 px-3 py-2.5 text-sm font-medium rounded-xl border border-gray-200 bg-white text-gray-600">Effort percu</button>
+                <button id="reference-tab-effort" onclick="switchReferenceScale('effort')" class="flex-1 px-3 py-2.5 text-sm font-medium rounded-xl border border-gray-200 bg-white text-gray-600">Effort perçu</button>
             </div>
 
             <div class="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm mb-4">
@@ -1395,13 +1864,13 @@
             </div>
 
             <div class="text-xs text-gray-400 leading-relaxed" id="reference-source-copy">
-                Base clinique simplifiee issue d'une echelle numerique 0-10 pour la douleur et de Borg CR10 pour l'effort percu. A utiliser comme repere de suivi, pas comme diagnostic.
+                Base clinique simplifiée issue d'une échelle numérique 0-10 pour la douleur et de Borg CR10 pour l'effort perçu. À utiliser comme repère de suivi, pas comme diagnostic.
             </div>
         </div>
     </div>
 
     <!-- ===== BOTTOM NAV ===== -->
-    <nav class="phone-safe-nav fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 z-50" style="max-width: 390px; margin: 0 auto;">
+    <nav class="app-nav phone-safe-nav fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 z-50" style="max-width: 390px; margin: 0 auto;">
         <div class="flex">
             <button onclick="switchTab('home')" class="tab-btn active flex-1 flex flex-col items-center py-2.5 relative" data-tab="home">
                 <svg class="w-6 h-6 tab-icon text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
@@ -1457,10 +1926,10 @@
         }
     };
     const dailyWorkoutOverview = {
-        title: 'Entrainement quotidien',
+        title: 'Entraînement quotidien',
         subtitle: 'Pull up, Push up et Squat',
         badge: 'Quotidien',
-        muscles: ['Dos', 'Biceps', 'Pectoraux', 'Epaules', 'Triceps', 'Quadriceps', 'Fessiers'],
+        muscles: ['Dos', 'Biceps', 'Pectoraux', 'Épaules', 'Triceps', 'Quadriceps', 'Fessiers'],
         highlights: {
             front: ['arms', 'chest', 'shoulders', 'quads'],
             back: ['back', 'glutes']
@@ -1471,7 +1940,7 @@
             label: 'Push',
             subtitle: 'Poitrine, epaules et triceps',
             exercises: ['Push up'],
-            muscles: ['Pectoraux', 'Epaules', 'Triceps'],
+            muscles: ['Pectoraux', 'Épaules', 'Triceps'],
             highlights: {
                 front: ['chest', 'shoulders', 'arms'],
                 back: []
@@ -1522,7 +1991,7 @@
                 3: "Comme marcher sur une jellyfish. Je peux avancer, mais chaque pas me rappelle le genou."
             },
             effort: {
-                7: "Je peux finir la serie, mais ma forme commence a se degrader si je pousse plus loin."
+                7: "Je peux finir la série, mais ma forme commence à se dégrader si je pousse plus loin."
             }
         },
         latestScores: {
@@ -1534,46 +2003,46 @@
 
     const painScale = {
         0: { short: 'Aucune douleur.', label: 'Aucune douleur', official: "Tu ne sens pas de douleur en ce moment.", cues: ["Rien ne te tire l'attention.", "Le mouvement n'est pas limite par la douleur.", "Le suivi sert surtout de point de comparaison."], qualities: ['aucune', 'calme', 'stable'] },
-        1: { short: 'Tres legere, a peine perceptible.', label: 'Tres legere', official: "La douleur est presque absente, mais tu la remarques si tu y fais attention.", cues: ["Tu peux l'oublier facilement.", "Le mouvement reste naturel.", "Le score sert surtout de repere precoce."], qualities: ['leger', 'trace', 'discret'] },
-        2: { short: 'Legere, presente mais facile a gerer.', label: 'Legere', official: "La douleur est presente, mais elle reste facile a gerer et n'interrompt pas vraiment l'activite.", cues: ["Tu peux continuer sans modifier grand-chose.", "Le geste reste controle.", "Le symptome merite d'etre note si il monte apres l'exercice."], qualities: ['leger', 'sourd', 'supportable'] },
-        3: { short: 'Claire, mais encore supportable.', label: 'Claire mais supportable', official: "La douleur est nette. Elle attire l'attention, mais elle reste generalement tolerable.", cues: ["Tu la sens pendant le mouvement.", "Tu peux souvent continuer en ralentissant ou en restant attentif.", "Le contexte avant, pendant et apres devient utile a noter."], qualities: ['sourd', 'tiraillement', 'pulsatile'] },
-        4: { short: 'Moderate basse, elle commence a peser.', label: 'Moderate basse', official: "La douleur commence a peser sur ton attention et peut te faire ajuster le rythme ou l'amplitude.", cues: ["Tu adaptes ton mouvement plus consciemment.", "La douleur prend une vraie place dans ton effort.", "Le suivi aide a voir si elle redescend ensuite."], qualities: ['pression', 'tiraillement', 'raideur'] },
-        5: { short: 'Moderate, difficile a ignorer.', label: 'Moderate', official: "La douleur devient difficile a ignorer et limite plus clairement le confort ou la fluidite du geste.", cues: ["Tu dois te concentrer pour continuer.", "Certaines taches deviennent moins fluides.", "Le score appelle souvent une discussion avec le physio si il se repete."], qualities: ['lancinant', 'brulure', 'lourd'] },
-        6: { short: 'Moderate haute, le mouvement se complique.', label: 'Moderate haute', official: "La douleur est importante et commence a vraiment compliquer le mouvement ou l'effort.", cues: ["Le geste perd en aisance.", "Tu peux reduire l'amplitude ou ralentir beaucoup.", "La douleur merite un suivi plus serre."], qualities: ['aigu', 'brulure', 'pulsatile'] },
-        7: { short: 'Forte, elle prend toute la place.', label: 'Forte', official: "La douleur est forte et prend une grande place dans ton attention. Elle peut clairement limiter l'activite.", cues: ["Tu changes nettement ta facon de bouger.", "Le mouvement peut devenir hesitant.", "Une hausse rapide ou inhabituelle doit etre signalee."], qualities: ['fort', 'pulsatile', 'brutal'] },
-        8: { short: 'Tres forte, difficile de rester relache.', label: 'Tres forte', official: "La douleur est tres forte. Elle rend le mouvement ou l'effort difficile a maintenir normalement.", cues: ["Tu es tende ou sur la defensive.", "Le mouvement se degrade ou s'arrete plus vite.", "Le score devient prioritaire a remonter au physio."], qualities: ['coupant', 'brulant', 'ecrasant'] },
-        9: { short: 'Presque insupportable.', label: 'Presque insupportable', official: "La douleur approche d'un niveau insupportable et monopolise presque toute ton attention.", cues: ["Tu penses d'abord a t'arreter.", "La qualite de mouvement n'est plus fiable.", "Le symptome demande une reaction rapide."], qualities: ['violent', 'insupportable', 'brutal'] },
-        10: { short: 'Douleur maximale.', label: 'Douleur maximale', official: "La douleur est au maximum de ce que tu peux imaginer ou tolerer.", cues: ["Tu ne peux plus continuer normalement.", "Le mouvement s'arrete ou casse tout de suite.", "C'est un signal a prendre au serieux et a communiquer immediatement."], qualities: ['extreme', 'insupportable', 'debordant'] }
+        1: { short: 'Très légère, à peine perceptible.', label: 'Très légère', official: "La douleur est presque absente, mais tu la remarques si tu y fais attention.", cues: ["Tu peux l'oublier facilement.", "Le mouvement reste naturel.", "Le score sert surtout de repère précoce."], qualities: ['léger', 'trace', 'discret'] },
+        2: { short: 'Légère, présente mais facile à gérer.', label: 'Légère', official: "La douleur est présente, mais elle reste facile à gérer et n'interrompt pas vraiment l'activité.", cues: ["Tu peux continuer sans modifier grand-chose.", "Le geste reste contrôlé.", "Le symptôme mérite d'être noté s'il monte après l'exercice."], qualities: ['léger', 'sourd', 'supportable'] },
+        3: { short: 'Claire, mais encore supportable.', label: 'Claire mais supportable', official: "La douleur est nette. Elle attire l'attention, mais elle reste généralement tolérable.", cues: ["Tu la sens pendant le mouvement.", "Tu peux souvent continuer en ralentissant ou en restant attentif.", "Le contexte avant, pendant et après devient utile à noter."], qualities: ['sourd', 'tiraillement', 'pulsatile'] },
+        4: { short: 'Modérée basse, elle commence à peser.', label: 'Modérée basse', official: "La douleur commence à peser sur ton attention et peut te faire ajuster le rythme ou l'amplitude.", cues: ["Tu adaptes ton mouvement plus consciemment.", "La douleur prend une vraie place dans ton effort.", "Le suivi aide à voir si elle redescend ensuite."], qualities: ['pression', 'tiraillement', 'raideur'] },
+        5: { short: 'Modérée, difficile à ignorer.', label: 'Modérée', official: "La douleur devient difficile à ignorer et limite plus clairement le confort ou la fluidité du geste.", cues: ["Tu dois te concentrer pour continuer.", "Certaines tâches deviennent moins fluides.", "Le score appelle souvent une discussion avec le physio s'il se répète."], qualities: ['lancinant', 'brûlure', 'lourd'] },
+        6: { short: 'Modérée haute, le mouvement se complique.', label: 'Modérée haute', official: "La douleur est importante et commence à vraiment compliquer le mouvement ou l'effort.", cues: ["Le geste perd en aisance.", "Tu peux réduire l'amplitude ou ralentir beaucoup.", "La douleur mérite un suivi plus serré."], qualities: ['aigu', 'brûlure', 'pulsatile'] },
+        7: { short: 'Forte, elle prend toute la place.', label: 'Forte', official: "La douleur est forte et prend une grande place dans ton attention. Elle peut clairement limiter l'activité.", cues: ["Tu changes nettement ta façon de bouger.", "Le mouvement peut devenir hésitant.", "Une hausse rapide ou inhabituelle doit être signalée."], qualities: ['fort', 'pulsatile', 'brutal'] },
+        8: { short: 'Très forte, difficile de rester relâché.', label: 'Très forte', official: "La douleur est très forte. Elle rend le mouvement ou l'effort difficile à maintenir normalement.", cues: ["Tu es tendu ou sur la défensive.", "Le mouvement se dégrade ou s'arrete plus vite.", "Le score devient prioritaire à remonter au physio."], qualities: ['coupant', 'brûlant', 'écrasant'] },
+        9: { short: 'Presque insupportable.', label: 'Presque insupportable', official: "La douleur approche d'un niveau insupportable et monopolise presque toute ton attention.", cues: ["Tu penses d'abord à t'arrêter.", "La qualité de mouvement n'est plus fiable.", "Le symptôme demande une réaction rapide."], qualities: ['violent', 'insupportable', 'brutal'] },
+        10: { short: 'Douleur maximale.', label: 'Douleur maximale', official: "La douleur est au maximum de ce que tu peux imaginer ou tolérer.", cues: ["Tu ne peux plus continuer normalement.", "Le mouvement s'arrête ou casse tout de suite.", "C'est un signal à prendre au sérieux et à communiquer immédiatement."], qualities: ['extrême', 'insupportable', 'débordant'] }
     };
 
     const effortScale = {
-        1: { short: 'Tres facile, presque au repos.', label: 'Tres facile', official: "L'effort est minime. Tu sens a peine la charge ou la demande physique.", cues: ["Tu pourrais continuer longtemps.", "Le mouvement est tres propre.", "Tu as beaucoup de marge."], qualities: ['leger', 'fluide', 'facile'] },
-        2: { short: 'Facile, tres confortable.', label: 'Facile', official: "L'effort reste tres confortable et facile a soutenir.", cues: ["Tu peux parler sans effort.", "La forme reste stable.", "Tu as une grande reserve."], qualities: ['confortable', 'stable', 'controle'] },
-        3: { short: 'Modere leger, tu chauffes.', label: 'Modere leger', official: "Tu sens que le corps travaille, mais l'effort reste leger a moderer.", cues: ["Tu es engage sans etre proche de la limite.", "La respiration monte un peu.", "Tu pourrais ajouter du volume sans probleme."], qualities: ['actif', 'regulier', 'maitrise'] },
-        4: { short: 'Modere, ca travaille pour vrai.', label: 'Modere', official: "L'effort est clairement present, mais il reste bien controle.", cues: ["Tu sens un vrai travail musculaire.", "Tu gardes une bonne technique.", "Tu pourrais encore faire plusieurs repetitions de plus."], qualities: ['solide', 'regulier', 'maitrise'] },
-        5: { short: 'Soutenu, mais encore sous controle.', label: 'Soutenu', official: "L'effort devient soutenu. Tu travailles pour vrai, mais tu restes sous controle.", cues: ["La respiration augmente.", "Tu sens la fatigue monter.", "Tu gardes encore de la marge."], qualities: ['soutenu', 'engage', 'controle'] },
-        6: { short: 'Difficile, avec encore un peu de marge.', label: 'Difficile', official: "L'effort est difficile, mais tu peux encore maintenir une bonne technique avec de l'attention.", cues: ["Tu dois vraiment te concentrer.", "Le corps travaille fort.", "Il reste quelques repetitions possibles."], qualities: ['difficile', 'dense', 'exigeant'] },
-        7: { short: 'Tres difficile, la marge devient mince.', label: 'Tres difficile', official: "L'effort est tres difficile. La marge existe encore, mais elle devient mince.", cues: ["Ta forme peut commencer a se degrader si tu pousses trop.", "Tu peux faire peu de repetitions de plus.", "Le score est souvent utile pour calibrer la charge."], qualities: ['tres dur', 'limite', 'serre'] },
-        8: { short: 'Presque maximal.', label: 'Presque maximal', official: "Tu es tres proche du maximum. Le mouvement demande un engagement quasi total.", cues: ["La technique demande toute ton attention.", "La reserve est tres faible.", "Tu ne pourrais pas tenir ce niveau longtemps."], qualities: ['quasi max', 'tres lourd', 'intense'] },
-        9: { short: 'Quasi maximal, presque plus de marge.', label: 'Quasi maximal', official: "Tu es presque au maximum et il reste tres peu de marge avant l'echec.", cues: ["La forme risque de casser si tu insistes.", "Tu peux difficilement ajouter une repetition propre.", "Le score sert surtout a signaler une intensite tres elevee."], qualities: ['presque max', 'extreme', 'limite'] },
-        10: { short: 'Maximal, tu ne peux pas en faire plus.', label: 'Maximal', official: "C'est ton effort maximal du moment. Tu ne peux pas faire plus sans t'arreter ou casser la forme.", cues: ["Tu n'as plus de reserve.", "Le mouvement doit s'arreter.", "Le score indique une limite atteinte."], qualities: ['maximal', 'echec', 'aucune marge'] }
+        1: { short: 'Très facile, presque au repos.', label: 'Très facile', official: "L'effort est minime. Tu sens à peine la charge ou la demande physique.", cues: ["Tu pourrais continuer longtemps.", "Le mouvement est très propre.", "Tu as beaucoup de marge."], qualities: ['léger', 'fluide', 'facile'] },
+        2: { short: 'Facile, très confortable.', label: 'Facile', official: "L'effort reste très confortable et facile à soutenir.", cues: ["Tu peux parler sans effort.", "La forme reste stable.", "Tu as une grande réserve."], qualities: ['confortable', 'stable', 'contrôle'] },
+        3: { short: 'Modéré léger, tu chauffes.', label: 'Modéré léger', official: "Tu sens que le corps travaille, mais l'effort reste léger à modéré.", cues: ["Tu es engagé sans être proche de la limite.", "La respiration monte un peu.", "Tu pourrais ajouter du volume sans problème."], qualities: ['actif', 'régulier', 'maîtrise'] },
+        4: { short: 'Modéré, ça travaille pour vrai.', label: 'Modéré', official: "L'effort est clairement présent, mais il reste bien contrôlé.", cues: ["Tu sens un vrai travail musculaire.", "Tu gardes une bonne technique.", "Tu pourrais encore faire plusieurs répétitions de plus."], qualities: ['solide', 'régulier', 'maîtrise'] },
+        5: { short: 'Soutenu, mais encore sous contrôle.', label: 'Soutenu', official: "L'effort devient soutenu. Tu travailles pour vrai, mais tu restes sous contrôle.", cues: ["La respiration augmente.", "Tu sens la fatigue monter.", "Tu gardes encore de la marge."], qualities: ['soutenu', 'engage', 'contrôle'] },
+        6: { short: 'Difficile, avec encore un peu de marge.', label: 'Difficile', official: "L'effort est difficile, mais tu peux encore maintenir une bonne technique avec de l'attention.", cues: ["Tu dois vraiment te concentrer.", "Le corps travaille fort.", "Il reste quelques répétitions possibles."], qualities: ['difficile', 'dense', 'exigeant'] },
+        7: { short: 'Très difficile, la marge devient mince.', label: 'Très difficile', official: "L'effort est très difficile. La marge existe encore, mais elle devient mince.", cues: ["Ta forme peut commencer à se dégrader si tu pousses trop.", "Tu peux faire peu de répétitions de plus.", "Le score est souvent utile pour calibrer la charge."], qualities: ['très dur', 'limite', 'serre'] },
+        8: { short: 'Presque maximal.', label: 'Presque maximal', official: "Tu es très proche du maximum. Le mouvement demande un engagement quasi total.", cues: ["La technique demande toute ton attention.", "La réserve est très faible.", "Tu ne pourrais pas tenir ce niveau longtemps."], qualities: ['quasi max', 'très lourd', 'intense'] },
+        9: { short: 'Quasi maximal, presque plus de marge.', label: 'Quasi maximal', official: "Tu es presque au maximum et il reste très peu de marge avant l'échec.", cues: ["La forme risque de casser si tu insistes.", "Tu peux difficilement ajouter une répétition propre.", "Le score sert surtout à signaler une intensité très élevée."], qualities: ['presque max', 'extrême', 'limite'] },
+        10: { short: 'Maximal, tu ne peux pas en faire plus.', label: 'Maximal', official: "C'est ton effort maximal du moment. Tu ne peux pas faire plus sans t'arrêter ou casser la forme.", cues: ["Tu n'as plus de réserve.", "Le mouvement doit s'arrêter.", "Le score indique une limite atteinte."], qualities: ['maximal', 'échec', 'aucune marge'] }
     };
 
     const physioWikiNotes = {
         pain: {
-            title: 'Comment lire la douleur pendant la rehab',
+            title: 'Comment lire la douleur pendant la réhab',
             notes: [
-                "Une douleur n'est pas toujours un signal de dommage. Ce qui compte, c'est aussi comment elle evolue pendant et apres l'exercice.",
-                "Regarde si elle monte vite, si elle change de qualite, ou si elle reste elevee longtemps apres la seance.",
-                "Si la douleur grimpe brutalement, devient tres differente, ou bloque clairement le mouvement, note-le et partage-le."
+                "Une douleur n'est pas toujours un signal de dommage. Ce qui compte, c'est aussi comment elle évolue pendant et après l'exercice.",
+                "Regarde si elle monte vite, si elle change de qualité, ou si elle reste élevée longtemps après la séance.",
+                "Si la douleur grimpe brutalement, devient très différente, ou bloque clairement le mouvement, note-le et partage-le."
             ]
         },
         effort: {
             title: "Comment lire l'effort pendant les exercices",
             notes: [
-                "Un effort 5 a 7/10 peut etre normal sur des exercices de renforcement. Le bon score depend de l'objectif de l'exercice.",
-                "Si ta forme commence a se degrader, si tu retiens ton souffle, ou si tu perds le controle du mouvement, l'effort est peut-etre trop haut.",
-                "Le chiffre est utile s'il t'aide a decrire ta marge: combien de reps propres il te reste vraiment."
+                "Un effort 5 à 7/10 peut être normal sur des exercices de renforcement. Le bon score dépend de l'objectif de l'exercice.",
+                "Si ta forme commence à se dégrader, si tu retiens ton souffle, ou si tu perds le contrôle du mouvement, l'effort est peut-être trop haut.",
+                "Le chiffre est utile s'il t'aide à décrire ta marge : combien de reps propres il te reste vraiment."
             ]
         }
     };
@@ -1582,40 +2051,40 @@
     const postWorkoutCheckInTemplates = [
         {
             id: 'post-workout',
-            title: "Apres l'entrainement",
-            relativeTime: "apres ta seance",
-            agendaTime: "Aujourd'hui · juste apres la seance",
-            prompt: "Comment tu te sens juste apres la seance ? Douleur, fatigue ou confiance dans le genou ?",
-            notesPlaceholder: "Qu'est-ce que tu remarques juste apres l'entrainement ?"
+            title: "Après l'entraînement",
+            relativeTime: "après ta séance",
+            agendaTime: "Aujourd'hui · juste après la séance",
+            prompt: "Comment tu te sens juste après la séance ? Douleur, fatigue ou confiance dans le genou ?",
+            notesPlaceholder: "Qu'est-ce que tu remarques juste après l'entraînement ?"
         },
         {
             id: 'post-15m',
-            title: '15 min apres',
+            title: '15 min après',
             relativeTime: 'dans 15 min',
             agendaTime: "Aujourd'hui · 18:00",
-            prompt: "Comment ton genou reagit 15 min apres le renforcement ? Douleur, raideur ou fatigue inhabituelle ?",
-            notesPlaceholder: "Qu'est-ce qui change 15 min apres l'effort ?"
+            prompt: "Comment ton genou réagit 15 min après le renforcement ? Douleur, raideur ou fatigue inhabituelle ?",
+            notesPlaceholder: "Qu'est-ce qui change 15 min après l'effort ?"
         },
         {
             id: 'post-2h',
-            title: '2 h apres',
+            title: '2 h après',
             relativeTime: 'ce soir',
             agendaTime: "Aujourd'hui · 19:45",
             prompt: "Deux heures plus tard, est-ce que la douleur est redescendue ? Est-ce que tu sens encore une lourdeur ?",
-            notesPlaceholder: "Que remarques-tu 2 h apres l'entrainement ?"
+            notesPlaceholder: "Que remarques-tu 2 h après l'entraînement ?"
         },
         {
             id: 'next-morning',
             title: 'Demain matin',
             relativeTime: 'demain matin',
             agendaTime: "Demain · 07:30",
-            prompt: "Au reveil, comment tu te sens apres l'entrainement d'hier ? Plus mobile, plus irrite, ou stable ?",
+            prompt: "Au réveil, comment tu te sens après l'entraînement d'hier ? Plus mobile, plus irrité, ou stable ?",
             notesPlaceholder: "Comment te sens-tu demain matin ?"
         }
     ];
 
     const profileFollowUpPlan = {
-        nextSessionLabel: "Seance renfo du jour",
+        nextSessionLabel: "Séance renfo du jour",
         reminderIds: ['post-workout', 'post-15m', 'post-2h', 'next-morning'],
         progression: [
             { day: 'Lun', status: 'done', effort: 6 },
@@ -1632,26 +2101,26 @@
         {
             date: 'Fev 2026',
             title: 'Blessure initiale',
-            detail: "Episode aigu au genou droit pendant le sport avec sensation d'instabilite et arret de l'activite."
+            detail: "Episode aigu au genou droit pendant le sport avec sensation d'instabilite et arret de l'activité."
         },
         {
             date: 'Mars 2026',
             title: 'Chirurgie LCA',
-            detail: "Reconstruction LCA avec debut de rehab progressive centre sur amplitude, controle, puis renforcement."
+            detail: "Reconstruction LCA avec début de réhab progressive centrée sur amplitude, contrôle, puis renforcement."
         },
         {
             date: 'Aujourd hui',
             title: 'Suivi semaine 6',
-            detail: "Bird Dog, Wall Squats et Hip Flexor Stretch. Surveillance de la douleur immediate, 2 h apres, puis le lendemain matin."
+            detail: "Bird Dog, Wall Squats et Hip Flexor Stretch. Surveillance de la douleur immédiate, 2 h après, puis le lendemain matin."
         }
     ];
-    const healthHistoryPastVisitReasons = ['Entorse de cheville', 'Douleur cervicale'];
+    const healthHistoryPastVisitReasons = ['Strain', 'Neck pain'];
     const strengthProgressSeries = {
         reps: {
             label: 'Reps',
             unit: 'reps',
             accentColor: '#2563eb',
-            subtitle: 'Progression des repetitions sur 6 semaines',
+            subtitle: 'Progression des répétitions sur 6 semaines',
             points: [
                 { x: 'S1', y: 8 },
                 { x: 'S2', y: 8 },
@@ -1780,7 +2249,7 @@
         }
 
         return {
-            label: 'A faire',
+            label: 'À faire',
             pillClass: 'bg-warning-50 text-warning-600',
             selectedCardClass: 'border-warning-100 bg-warning-50',
             selectedKickerClass: 'text-warning-600',
@@ -1882,13 +2351,13 @@
     }
 
     function getScaleName(scaleType) {
-        return scaleType === 'pain' ? 'Douleur' : 'Effort percu';
+        return scaleType === 'pain' ? 'Douleur' : 'Effort perçu';
     }
 
     function getSourceCopy(scaleType) {
         return scaleType === 'pain'
-            ? "Base clinique simplifiee issue d'une echelle numerique de douleur 0-10. En pratique, 1 a 3 est souvent interprete comme leger, 4 a 6 comme modere, 7 a 10 comme severe."
-            : "Base clinique simplifiee issue de Borg CR10 pour l'effort percu. Le score aide a decrire a quel point l'exercice est facile, difficile, ou maximal pour toi.";
+            ? "Base clinique simplifiée issue d'une échelle numérique de douleur 0-10. En pratique, 1 à 3 est souvent interprété comme léger, 4 à 6 comme modéré, 7 à 10 comme sévère."
+            : "Base clinique simplifiée issue de Borg CR10 pour l'effort perçu. Le score aide à décrire à quel point l'exercice est facile, difficile, ou maximal pour toi.";
     }
 
     function getPersonalAnchor(scaleType, score) {
@@ -1980,7 +2449,7 @@
             if (restExerciseEl) {
                 restExerciseEl.textContent = exercise.restBetweenExercises > 0
                     ? `${formatDuration(exercise.restBetweenExercises)} avant exo suivant`
-                    : 'Pas de pause apres';
+                    : 'Pas de pause après';
             }
         });
     }
@@ -1990,7 +2459,7 @@
         document.getElementById('detail-rest-set').textContent = getExerciseBreakLabel(currentExercise.restBetweenSets, 'Sans pause');
         document.getElementById('detail-rest-exercise').textContent = currentExercise.restBetweenExercises > 0
             ? `${formatDuration(currentExercise.restBetweenExercises)} avant le prochain exo`
-            : 'Pas de pause apres cet exo';
+            : 'Pas de pause après cet exo';
         document.getElementById('detail-duration-summary').textContent = `Temps estime pour cet exercice : ${formatDuration(getExerciseTotalSeconds(currentExercise, { setsCount: actualSets, repsBySet: perSetReps }))}, pauses incluses.`;
     }
 
@@ -2008,8 +2477,8 @@
 
         memoEl.textContent = `${score}/10 = ${content.short}`;
         anchorEl.textContent = anchor
-            ? `Ton repere : ${anchor}`
-            : "Ton repere : ajoute ce que ce score veut dire pour toi.";
+            ? `Ton repère : ${anchor}`
+            : "Ton repère : ajoute ce que ce score veut dire pour toi.";
     }
 
     function refreshAllScaleMemos() {
@@ -2128,8 +2597,13 @@
         const getX = index => padding.left + (plotWidth * index) / Math.max(1, series.points.length - 1);
         const getY = value => padding.top + plotHeight - ((value - minTick) / range) * plotHeight;
         const linePath = series.points.map((point, index) => `${index === 0 ? 'M' : 'L'} ${getX(index)} ${getY(point.y)}`).join(' ');
+        const areaPath = `${linePath} L ${getX(series.points.length - 1)} ${padding.top + plotHeight} L ${getX(0)} ${padding.top + plotHeight} Z`;
         const latestPoint = series.points[series.points.length - 1];
         const bestPoint = series.points.reduce((best, point) => point.y > best.y ? point : best, series.points[0]);
+        const latestX = getX(series.points.length - 1);
+        const latestY = getY(latestPoint.y);
+        const gradientId = `strength-chart-area-${strengthProgressMetric}`;
+        const glowId = `strength-chart-glow-${strengthProgressMetric}`;
 
         titleEl.textContent = 'Squat';
         subtitleEl.textContent = series.subtitle;
@@ -2158,7 +2632,16 @@
 
         chartEl.innerHTML = `
             <svg viewBox="0 0 ${width} ${height}" class="w-full h-auto">
-                <rect x="0" y="0" width="${width}" height="${height}" rx="18" fill="#ffffff"></rect>
+                <defs>
+                    <linearGradient id="${gradientId}" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stop-color="${series.accentColor}" stop-opacity="0.22"></stop>
+                        <stop offset="100%" stop-color="${series.accentColor}" stop-opacity="0.02"></stop>
+                    </linearGradient>
+                    <filter id="${glowId}" x="-20%" y="-20%" width="140%" height="140%">
+                        <feDropShadow dx="0" dy="10" stdDeviation="10" flood-color="${series.accentColor}" flood-opacity="0.16"></feDropShadow>
+                    </filter>
+                </defs>
+                <rect x="0" y="0" width="${width}" height="${height}" rx="18" fill="#f8fbff"></rect>
                 ${ticks.map(value => `
                     <g>
                         <line x1="${padding.left}" y1="${getY(value)}" x2="${width - padding.right}" y2="${getY(value)}" stroke="#e5e7eb" stroke-dasharray="4 4"></line>
@@ -2167,10 +2650,13 @@
                 `).join('')}
                 <line x1="${padding.left}" y1="${padding.top}" x2="${padding.left}" y2="${padding.top + plotHeight}" stroke="#cbd5e1"></line>
                 <line x1="${padding.left}" y1="${padding.top + plotHeight}" x2="${width - padding.right}" y2="${padding.top + plotHeight}" stroke="#cbd5e1"></line>
-                <path d="${linePath}" fill="none" stroke="${series.accentColor}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></path>
+                <path d="${areaPath}" fill="url(#${gradientId})"></path>
+                <line x1="${latestX}" y1="${padding.top}" x2="${latestX}" y2="${padding.top + plotHeight}" stroke="${series.accentColor}" stroke-opacity="0.28" stroke-dasharray="4 5"></line>
+                <path d="${linePath}" fill="none" stroke="${series.accentColor}" stroke-width="3.25" stroke-linecap="round" stroke-linejoin="round" filter="url(#${glowId})"></path>
                 ${series.points.map((point, index) => `
                     <g>
-                        <circle cx="${getX(index)}" cy="${getY(point.y)}" r="5" fill="#ffffff" stroke="${series.accentColor}" stroke-width="3"></circle>
+                        ${index === series.points.length - 1 ? `<circle cx="${getX(index)}" cy="${getY(point.y)}" r="10" fill="${series.accentColor}" fill-opacity="0.14"></circle>` : ''}
+                        <circle cx="${getX(index)}" cy="${getY(point.y)}" r="${index === series.points.length - 1 ? '5.5' : '5'}" fill="#ffffff" stroke="${series.accentColor}" stroke-width="3"></circle>
                         <text x="${getX(index)}" y="${height - 10}" text-anchor="middle" font-size="11" fill="#64748b">${point.x}</text>
                     </g>
                 `).join('')}
@@ -2187,7 +2673,7 @@
         remindersEl.innerHTML = reminders.map(reminder => {
             const status = getPostWorkoutCheckInStatusMeta(reminder.id);
             return `
-            <button type="button" onclick="openPostWorkoutCheckIn('${reminder.id}', 'profile')" class="w-full text-left rounded-2xl border px-4 py-3 transition ${status.summaryButtonClass} hover:border-primary-200 hover:bg-primary-50/60">
+            <button type="button" onclick="openPostWorkoutCheckIn('${reminder.id}', 'profile')" class="reminder-entry w-full text-left rounded-2xl border px-4 py-3 transition ${status.summaryButtonClass} hover:border-primary-200 hover:bg-primary-50/60">
                 <div class="flex items-start justify-between gap-3">
                     <div class="min-w-0">
                         <div class="flex items-center gap-2">
@@ -2204,7 +2690,7 @@
                         <div class="text-xs text-gray-500 mt-2 leading-relaxed">${reminder.prompt}</div>
                     </div>
                     <div class="flex flex-col items-end gap-2">
-                        <span class="px-2 py-1 rounded-full text-[11px] font-semibold ${status.pillClass}">${status.label}</span>
+                        <span class="ui-pill px-2 py-1 rounded-full text-[11px] font-semibold ${status.pillClass}">${status.label}</span>
                         <svg class="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                         </svg>
@@ -2216,13 +2702,15 @@
 
         graphEl.innerHTML = profileFollowUpPlan.progression.map(entry => {
             const status = getProgressStatusStyles(entry.status);
+            const fillHeight = Math.max(28, Math.min(68, 22 + entry.effort * 5));
             return `
-                <div class="text-center">
+                <div class="progress-day-card text-center">
                     <div class="text-[11px] text-gray-400 mb-2">${entry.day}</div>
-                    <div class="rounded-2xl bg-gray-50 border border-gray-100 px-1.5 py-2">
-                        <div class="w-full h-16 rounded-xl ${status.bar}"></div>
-                        <div class="mt-2 text-[11px] font-medium ${status.badge} rounded-full px-1.5 py-1">${status.label}</div>
-                        <div class="mt-2 text-xs font-semibold text-gray-900">${entry.effort}/10</div>
+                    <div class="progress-day-track">
+                        <div class="progress-day-fill ${status.bar}" style="height:${fillHeight}px"></div>
+                    </div>
+                    <div class="px-1.5 pt-2">
+                        <div class="mt-1 text-xs font-semibold text-gray-900">${entry.effort}/10</div>
                     </div>
                 </div>
             `;
@@ -2240,11 +2728,11 @@
             return;
         }
 
-        notesEl.placeholder = "Ex.: douleur 2 h apres, genou plus raide ce matin, ou question pour le prochain RDV.";
+        notesEl.placeholder = 'Quelque chose à signaler ?';
         if (!notesEl.value) {
             notesEl.value = '';
         }
-        submitBtn.textContent = 'Envoyer le check-in du jour';
+        submitBtn.textContent = 'Envoyer le journal du jour';
     }
 
     function renderPostWorkoutCheckInScreen() {
@@ -2285,8 +2773,8 @@
                             <div class="text-xs text-gray-500 mt-1">${template.agendaTime}</div>
                         </div>
                         <div class="flex flex-col items-end gap-2">
-                            <span class="px-2 py-1 rounded-full text-[11px] font-semibold ${status.pillClass}">${status.label}</span>
-                            ${isSelected ? '<span class="text-[11px] font-medium text-primary-600">Selectionne</span>' : ''}
+                            <span class="ui-pill px-2 py-1 rounded-full text-[11px] font-semibold ${status.pillClass}">${status.label}</span>
+                            ${isSelected ? '<span class="text-[11px] font-medium text-primary-600">Sélectionné</span>' : ''}
                         </div>
                     </div>
                 </button>
@@ -2295,7 +2783,7 @@
 
         selectedCardEl.className = `rounded-xl border p-4 ${selectedStatus.selectedCardClass}`;
         selectedKickerEl.className = `text-[11px] uppercase tracking-[0.12em] font-semibold ${selectedStatus.selectedKickerClass}`;
-        selectedStatusEl.className = `px-2.5 py-1 rounded-full text-[11px] font-semibold ${selectedStatus.pillClass}`;
+        selectedStatusEl.className = `ui-pill px-2.5 py-1 rounded-full text-[11px] font-semibold ${selectedStatus.pillClass}`;
         screenTitleEl.textContent = selectedTemplate.title;
         selectedKickerEl.textContent = profileFollowUpPlan.nextSessionLabel;
         selectedTitleEl.textContent = selectedTemplate.title;
@@ -2504,7 +2992,7 @@
             progressLabel: `${activeRoutineSession.name} · ${currentIndex + 1}/${activeRoutineSession.exercises.length}`,
             sourceLabel: `Routine: ${activeRoutineSession.name}`,
             setsTargetPrefix: 'cible',
-            partialBannerText: "Tu as adapte l'exercice a ta forme du jour. C'est correct dans ta routine.",
+            partialBannerText: "Tu as adapté l'exercice à ta forme du jour. C'est correct dans ta routine.",
             completeLabel: currentIndex < activeRoutineSession.exercises.length - 1 ? 'Valider et continuer' : 'Terminer la routine'
         });
     }
@@ -2620,7 +3108,7 @@
                 startButtonClass: 'bg-primary-600 hover:bg-primary-700 shadow-primary-600/20',
                 listBadgeLabel: 'Programme physio',
                 previewTitle: 'Programme physio du jour',
-                previewSubtitle: 'Choisis un exercice pour voir les consignes, ou commence la seance guidee.',
+                previewSubtitle: 'Choisis un exercice pour voir les consignes, ou commence la séance guidée.',
                 overview: prescribedWorkoutOverview,
                 exercises
             };
@@ -2629,15 +3117,15 @@
         if (programId === 'daily-workout') {
             return {
                 id: 'daily-workout',
-                label: 'Entrainement quotidien',
+                label: 'Entraînement quotidien',
                 accentColor: '#f59e0b',
                 badgeClass: 'bg-warning-50 text-warning-600',
-                sectionHint: "Le meme entrainement simple reste visible chaque jour dans cette V0.",
-                startLabel: "Commencer l'entrainement",
+                sectionHint: "Le même entraînement simple reste visible chaque jour dans cette V0.",
+                startLabel: "Commencer l'entraînement",
                 startButtonClass: 'bg-warning-500 hover:bg-warning-600 shadow-warning-500/20',
-                listBadgeLabel: 'Entrainement du jour',
-                previewTitle: "Entrainement quotidien",
-                previewSubtitle: "Ouvre un exercice pour l'aperçu ou lance la seance guidee rep par rep.",
+                listBadgeLabel: 'Entraînement du jour',
+                previewTitle: "Entraînement quotidien",
+                previewSubtitle: "Ouvre un exercice pour l'aperçu ou lance la séance guidée rep par rep.",
                 overview: dailyWorkoutOverview,
                 exercises: getDailyWorkoutExercises()
             };
@@ -2666,9 +3154,9 @@
                     <div>
                         <div class="text-xs uppercase tracking-[0.14em] text-primary-500 font-semibold">Plan du jour</div>
                         <div class="text-lg font-semibold text-gray-900 mt-1">Choisis ton bloc</div>
-                        <div class="text-sm text-gray-500 mt-1">Selectionne d'abord la physio ou l'entrainement quotidien. Le bouton commencer lance ensuite la seance guidee.</div>
+                        <div class="text-sm text-gray-500 mt-1">Sélectionne d'abord la physio ou l'entraînement quotidien. Le bouton commencer lance ensuite la séance guidée.</div>
                     </div>
-                    <span class="px-2.5 py-1 rounded-full bg-primary-50 text-primary-600 text-[11px] font-semibold">Aujourd'hui</span>
+                    <span class="ui-pill px-2.5 py-1 rounded-full bg-primary-50 text-primary-600 text-[11px] font-semibold">Aujourd'hui</span>
                 </div>
                 <div class="grid grid-cols-2 gap-3 mt-4">
                     <button type="button" onclick="selectExerciseProgram('physio')" class="rounded-2xl border border-primary-100 bg-primary-50 p-4 text-left transition hover:border-primary-200 hover:bg-primary-50/80">
@@ -2677,7 +3165,7 @@
                         <div class="text-xs text-gray-500 mt-1">${formatDuration(physioTotalSeconds)} pauses incluses</div>
                     </button>
                     <button type="button" onclick="selectExerciseProgram('daily-workout')" class="rounded-2xl border border-warning-100 bg-warning-50 p-4 text-left transition hover:border-warning-200 hover:bg-warning-50/80">
-                        <div class="text-xs uppercase tracking-[0.12em] text-warning-600 font-semibold">Entrainement quotidien</div>
+                        <div class="text-xs uppercase tracking-[0.12em] text-warning-600 font-semibold">Entraînement quotidien</div>
                         <div class="text-lg font-semibold text-gray-900 mt-2">${dailyWorkoutExercises.length} exos</div>
                         <div class="text-xs text-gray-500 mt-1">${formatDuration(dailyWorkoutTotalSeconds)} pauses incluses</div>
                     </button>
@@ -2738,7 +3226,7 @@
                                             <svg class="w-3.5 h-3.5" style="color:${config.accentColor};" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l2.5 2.5M12 3v2m6.364.636l-1.414 1.414M21 12h-2M5 12H3m3.05-6.364l1.414 1.414M12 19v2m6.364-2.636l-1.414-1.414M6.464 18.364l1.414-1.414M12 21a9 9 0 100-18 9 9 0 000 18z"/>
                                             </svg>
-                                            <span>${exercise.restBetweenExercises > 0 ? `${formatDuration(exercise.restBetweenExercises)} avant exo suivant` : 'Pas de pause apres'}</span>
+                                            <span>${exercise.restBetweenExercises > 0 ? `${formatDuration(exercise.restBetweenExercises)} avant exo suivant` : 'Pas de pause après'}</span>
                                         </span>
                                     </div>
                                 </div>
@@ -2780,14 +3268,14 @@
             const config = getExerciseProgramConfig(selectedExerciseProgram);
             if (config) {
                 countEl.textContent = `${config.exercises.length} exos a suivre`;
-                subcountEl.textContent = `${config.label} · ouvre un exo pour l'apercu ou demarre la seance`;
+                subcountEl.textContent = `${config.label} · ouvre un exo pour l'aperçu ou démarre la séance`;
                 renderExerciseProgramPreview(config);
                 return;
             }
         }
 
         countEl.textContent = 'Choisis ton bloc';
-        subcountEl.textContent = 'Physio ou entrainement quotidien';
+        subcountEl.textContent = 'Physio ou entraînement quotidien';
         renderExerciseHubOverview();
     }
 
@@ -2830,7 +3318,7 @@
                 <button type="button" onclick="toggleRoutineBuilderExercise('${exercise}')" class="w-full flex items-center justify-between rounded-2xl border px-4 py-3 ${checked ? 'border-primary-200 bg-primary-50' : 'border-gray-200 bg-gray-50'}">
                     <div class="text-left">
                         <div class="text-sm font-semibold text-gray-900">${exercise}</div>
-                        <div class="text-xs text-gray-400 mt-1">Exercice deja disponible dans l'app</div>
+                        <div class="text-xs text-gray-400 mt-1">Exercice disponible dans le mockup</div>
                     </div>
                     <span class="w-6 h-6 rounded-full border-2 flex items-center justify-center ${checked ? 'border-primary-500 bg-primary-500 text-white' : 'border-gray-300 bg-white text-transparent'}">
                         <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
@@ -3166,7 +3654,7 @@
             ? `Tenue cible: ${metricTarget} sec chaque cote · ${getExerciseBreakLabel(displayExercise.restBetweenSets, 'Sans pause')} entre series`
             : `Tempo ${displayExercise.tempo} · ${getExerciseBreakLabel(displayExercise.restBetweenSets, 'Sans pause')} entre series`;
 
-        document.getElementById('exercise-session-kicker').textContent = config ? config.previewTitle : 'Seance';
+        document.getElementById('exercise-session-kicker').textContent = config ? config.previewTitle : 'Séance';
         document.getElementById('exercise-session-name').textContent = displayExercise.name;
         document.getElementById('exercise-session-progress').textContent = `Exo ${upcomingStep.exerciseIndex + 1}/${totalExercises} · Serie ${upcomingStep.setIndex + 1}/${activeExerciseSession.exercises[upcomingStep.exerciseIndex].sets}`;
         document.getElementById('exercise-session-exercise-count').textContent = `${upcomingStep.exerciseIndex + 1}/${totalExercises}`;
@@ -3211,7 +3699,7 @@
                 ? 'Quand tu es pret, passe au prochain exercice.'
                 : 'Quand tu es pret, repars sur la serie suivante.';
             phaseBadgeEl.textContent = 'Pause';
-            phaseBadgeEl.className = 'px-2.5 py-1 rounded-full bg-warning-50 text-warning-600 text-[11px] font-semibold';
+            phaseBadgeEl.className = 'ui-pill px-2.5 py-1 rounded-full bg-warning-50 text-warning-600 text-[11px] font-semibold';
             feedbackFormEl.classList.add('hidden');
             restWrapperEl.classList.remove('hidden');
             primaryButtonEl.classList.add('hidden');
@@ -3227,7 +3715,7 @@
         phaseTitleEl.textContent = 'Valide ta serie';
         phaseCopyEl.textContent = `Entre ton feedback pour la serie ${activeExerciseSession.currentSetIndex + 1}.`;
         phaseBadgeEl.textContent = 'Active';
-        phaseBadgeEl.className = 'px-2.5 py-1 rounded-full bg-primary-50 text-primary-600 text-[11px] font-semibold';
+        phaseBadgeEl.className = 'ui-pill px-2.5 py-1 rounded-full bg-primary-50 text-primary-600 text-[11px] font-semibold';
         feedbackFormEl.classList.remove('hidden');
         restWrapperEl.classList.add('hidden');
         primaryButtonEl.classList.remove('hidden');
@@ -3254,10 +3742,10 @@
         openExerciseDetailForData(exercise, {
             mode: 'daily-workout',
             sourceScreen: 'exercise-workout',
-            kicker: 'Entrainement quotidien',
-            sourceLabel: 'Entrainement quotidien de Marc',
+            kicker: 'Entraînement quotidien',
+            sourceLabel: 'Entraînement quotidien de Marc',
             setsTargetPrefix: 'objectif',
-            partialBannerText: "Tu as adapte l'exercice a ta forme du jour. C'est correct pour ton entrainement quotidien.",
+            partialBannerText: "Tu as adapté l'exercice à ta forme du jour. C'est correct pour ton entraînement quotidien.",
             completeLabel: 'Retour au programme',
             isPreview: true
         });
@@ -3376,7 +3864,7 @@
                 icon.classList.add('hidden');
             }
         });
-        document.getElementById('exercise-counter').textContent = `${done}/${exercises.length} valides`;
+        document.getElementById('exercise-counter').textContent = `${done}/${exercises.length} faits`;
     }
 
     function completeExercise() {
@@ -3446,7 +3934,7 @@
         }
         saveReferenceStore();
         document.getElementById('reference-personal-status').textContent = cleaned
-            ? "Enregistre automatiquement. Ton physio pourra aussi voir ce repere."
+            ? "Enregistre automatiquement. Ton physio pourra aussi voir ce repère."
             : "Repere retire pour ce score.";
         refreshAllScaleMemos();
     }
@@ -3461,10 +3949,10 @@
         document.getElementById('reference-score-title').textContent = `${referenceView.score}/10`;
         document.getElementById('reference-score-subtitle').textContent = content.short;
         document.getElementById('reference-official-copy').textContent = content.official;
-        document.getElementById('reference-source-copy').textContent = `${getSourceCopy(referenceView.scaleType)} A utiliser comme repere de suivi, pas comme diagnostic.`;
+        document.getElementById('reference-source-copy').textContent = `${getSourceCopy(referenceView.scaleType)} A utiliser comme repère de suivi, pas comme diagnostic.`;
         document.getElementById('reference-personal-anchor').value = anchor;
         document.getElementById('reference-personal-status').textContent = anchor
-            ? "Enregistre automatiquement. Ton physio pourra aussi voir ce repere."
+            ? "Enregistre automatiquement. Ton physio pourra aussi voir ce repère."
             : "Ajoute ton propre moyen de reconnaitre ce score.";
 
         document.getElementById('reference-tab-pain').classList.toggle('scale-tab-active', referenceView.scaleType === 'pain');
@@ -3551,11 +4039,11 @@
 
         if (!btn) return;
         btn.disabled = true;
-        btn.textContent = 'Check-in envoye';
+        btn.textContent = 'Envoye !';
         btn.classList.remove('bg-primary-600');
         btn.classList.add('bg-success-500');
         setTimeout(() => {
-            btn.textContent = 'Envoyer le check-in du jour';
+            btn.textContent = 'Envoyer le journal du jour';
             btn.classList.add('bg-primary-600');
             btn.classList.remove('bg-success-500');
             btn.disabled = false;
@@ -3577,7 +4065,7 @@
 
         if (!btn) return;
         btn.disabled = true;
-        btn.textContent = 'Evaluation envoyee';
+        btn.textContent = 'Envoye !';
         btn.classList.remove('bg-primary-600');
         btn.classList.add('bg-success-500');
         setTimeout(() => {
