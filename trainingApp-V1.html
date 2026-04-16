@@ -339,11 +339,53 @@
         .exercise-plan-card-subtitle {
             grid-column: 1 / -1;
         }
+        .exercise-overview-card-header,
+        .exercise-preview-header,
+        .exercise-preview-section-header {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto;
+            column-gap: 0.75rem;
+            row-gap: 0.35rem;
+            align-items: start;
+        }
+        .exercise-overview-grid,
+        .exercise-program-grid,
+        .exercise-detail-rest-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 0.75rem;
+        }
+        .exercise-detail-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 0.75rem;
+        }
         .tab-label {
+            display: block;
+            max-width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
             white-space: nowrap;
             line-height: 1.05;
             letter-spacing: -0.01em;
             font-size: 0.72rem;
+        }
+        @media (max-width: 380px) {
+            .exercise-plan-card-header,
+            .exercise-overview-card-header,
+            .exercise-preview-header,
+            .exercise-preview-section-header {
+                grid-template-columns: minmax(0, 1fr);
+            }
+            .exercise-program-grid,
+            .exercise-overview-grid,
+            .exercise-detail-rest-grid,
+            .exercise-detail-stats-grid {
+                grid-template-columns: minmax(0, 1fr);
+            }
+            .tab-label {
+                font-size: 0.66rem;
+            }
         }
         .thread-chip {
             display: inline-flex;
@@ -807,7 +849,7 @@
                 <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
             </button>
             <div class="min-w-0 flex-1">
-                <div class="flex items-start justify-between gap-3">
+                <div class="exercise-overview-card-header">
                     <div class="min-w-0">
                         <div class="text-[11px] uppercase tracking-[0.14em] text-gray-400 font-semibold" id="exercise-detail-kicker">Programme physio</div>
                         <h1 class="text-lg font-semibold text-gray-900 mt-1" id="exercise-detail-name">Bird Dog</h1>
@@ -834,7 +876,7 @@
         <!-- Prescribed parameters (read-only) -->
         <div class="px-5 mb-3">
             <div class="section-kicker">Prescription du jour</div>
-            <div class="flex gap-3 mt-3">
+            <div class="exercise-detail-stats-grid mt-3">
                 <!-- Sets (editable) -->
                 <div class="detail-stat-card flex-1 bg-gray-50 rounded-xl p-3 text-center">
                     <div class="stepper">
@@ -861,7 +903,7 @@
         </div>
 
         <div class="px-5 mb-3">
-            <div class="grid grid-cols-2 gap-3">
+            <div class="exercise-detail-rest-grid">
                 <div class="detail-rest-card bg-gray-50 border border-gray-100 rounded-xl p-3">
                     <div class="flex items-center gap-2">
                         <div class="w-9 h-9 rounded-xl bg-white border border-gray-200 flex items-center justify-center">
@@ -998,7 +1040,7 @@
 
         <div class="px-5 mt-3 mb-4">
             <div class="bg-white border border-gray-100 rounded-2xl p-4 shadow-sm">
-                <div class="flex items-start justify-between gap-3">
+                <div class="exercise-overview-card-header">
                     <div class="min-w-0">
                         <div class="text-[11px] uppercase tracking-[0.12em] text-primary-500 font-semibold" id="exercise-session-phase-kicker">Serie active</div>
                         <div class="text-sm font-semibold text-gray-900 mt-1" id="exercise-session-phase-title">Valide ta serie</div>
@@ -3112,7 +3154,7 @@
                     </div>
                     <span class="px-2.5 py-1 rounded-full text-[11px] font-semibold" style="background:${accentColor}15; color:${accentColor};">${info.badge}</span>
                 </div>
-                <div class="grid grid-cols-2 gap-3 mt-4">
+                <div class="exercise-overview-grid mt-4">
                     <div class="bg-gray-50 border border-gray-100 rounded-2xl p-3 text-center">
                         ${renderAnatomyFigure('front', info.highlights.front, accentColor)}
                         <div class="text-[11px] text-gray-400 mt-1">Avant</div>
@@ -3199,7 +3241,7 @@
                     <span class="ui-pill px-2.5 py-1 rounded-full bg-primary-50 text-primary-600 text-[11px] font-semibold">Aujourd'hui</span>
                     <div class="exercise-plan-card-subtitle text-sm text-gray-500">Sélectionne d'abord la physio ou l'entraînement quotidien. Le bouton commencer lance ensuite la séance guidée.</div>
                 </div>
-                <div class="grid grid-cols-2 gap-3 mt-4">
+                <div class="exercise-program-grid mt-4">
                     <button type="button" onclick="selectExerciseProgram('physio')" class="rounded-2xl border border-primary-100 bg-primary-50 p-4 text-left transition hover:border-primary-200 hover:bg-primary-50/80">
                         <div class="text-xs uppercase tracking-[0.12em] text-primary-500 font-semibold">Physio</div>
                         <div class="text-lg font-semibold text-gray-900 mt-2">${exercises.length} exos</div>
@@ -3225,7 +3267,7 @@
         contentEl.innerHTML = `
             <section class="space-y-4">
                 <div class="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm">
-                    <div class="flex items-start justify-between gap-3">
+                    <div class="exercise-preview-header">
                         <div>
                             <div class="text-sm font-semibold text-gray-900">${config.previewTitle}</div>
                             <div class="text-xs text-gray-500 mt-1">${config.previewSubtitle}</div>
@@ -3241,7 +3283,7 @@
                     </button>
                 </div>
 
-                <div class="flex items-start justify-between gap-3">
+                <div class="exercise-preview-section-header">
                     <div>
                         <div class="text-sm font-semibold text-gray-900">${config.listBadgeLabel}</div>
                         <div class="text-xs text-gray-500 mt-1">${config.sectionHint}</div>
