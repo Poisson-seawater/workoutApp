@@ -299,6 +299,15 @@
         .messages-thread {
             max-height: calc(100dvh - 228px) !important;
             padding-bottom: calc(164px + env(safe-area-inset-bottom)) !important;
+            scroll-behavior: auto;
+        }
+        .messages-summary-sticky {
+            position: sticky;
+            top: 0.25rem;
+            z-index: 6;
+            padding-bottom: 0.35rem;
+            background: linear-gradient(180deg, rgba(247,251,255,0.96) 0%, rgba(247,251,255,0.78) 72%, rgba(247,251,255,0) 100%);
+            backdrop-filter: blur(10px);
         }
         .messages-summary-card {
             background: linear-gradient(135deg, rgba(239,246,255,0.92) 0%, rgba(255,255,255,0.82) 100%);
@@ -1355,14 +1364,16 @@
 
         <!-- Chat messages -->
         <div class="messages-thread px-5 py-4 pb-40 space-y-4 overflow-y-auto" style="max-height: calc(100dvh - 228px);">
-            <div class="messages-summary-card rounded-2xl p-4">
-                <div class="flex items-start justify-between gap-3">
-                    <div>
-                        <div class="section-kicker">Derniere consigne</div>
-                        <div class="text-sm font-semibold text-gray-900 mt-2">Squats a 8 reps cette semaine</div>
-                        <div class="text-xs text-gray-500 mt-1">Continue a glacer 15 min après l'exercice.</div>
+            <div class="messages-summary-sticky">
+                <div class="messages-summary-card rounded-2xl p-4">
+                    <div class="flex items-start justify-between gap-3">
+                        <div>
+                            <div class="section-kicker">Dernière consigne</div>
+                            <div class="text-sm font-semibold text-gray-900 mt-2">Squats à 8 reps cette semaine</div>
+                            <div class="text-xs text-gray-500 mt-1">Continue à glacer 15 min après l'exercice.</div>
+                        </div>
+                        <span class="section-pill">Vendredi</span>
                     </div>
-                    <span class="section-pill">Vendredi</span>
                 </div>
             </div>
             <!-- Date separator -->
@@ -3360,6 +3371,20 @@
         switchTab('exercise');
     }
 
+    function scrollMessagesToLatest() {
+        const threadEl = document.querySelector('#screen-messages .messages-thread');
+        if (!threadEl) return;
+
+        const scrollToBottom = () => {
+            threadEl.scrollTop = threadEl.scrollHeight;
+        };
+
+        requestAnimationFrame(() => {
+            scrollToBottom();
+            requestAnimationFrame(scrollToBottom);
+        });
+    }
+
     // Tab switching
     function switchTab(tab) {
         const screenId = 'screen-' + tab;
@@ -3391,6 +3416,9 @@
         }
         if (tab === 'profile') {
             renderProfileInsights();
+        }
+        if (tab === 'messages') {
+            scrollMessagesToLatest();
         }
 
         const navTabMap = {
